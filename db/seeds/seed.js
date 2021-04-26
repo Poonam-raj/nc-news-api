@@ -1,7 +1,7 @@
-const db = require("../connection");
-const { createTables, dropTables } = require("../seeds/manage-tables");
-const format = require("pg-format");
-const { formatTimeStamp } = require("../utils/data-manipulation");
+const db = require('../connection');
+const { createTables, dropTables } = require('../seeds/manage-tables');
+const format = require('pg-format');
+const { formatTimeStamp } = require('../utils/data-manipulation');
 
 const seed = async ({ articleData, topicData, userData, commentData }) => {
   await dropTables();
@@ -11,7 +11,6 @@ const seed = async ({ articleData, topicData, userData, commentData }) => {
     topicData.map(({ slug, description }) => [slug, description])
   );
   const insertingTopics = await db.query(insertTopicsQueryString);
-  console.log(insertingTopics.rows);
 
   const insertUserQueryString = format(
     `INSERT INTO "user" (username, avatar_url, name) VALUES %L RETURNING *;`,
@@ -28,7 +27,7 @@ const seed = async ({ articleData, topicData, userData, commentData }) => {
     articleData.map(({ title, body, votes, topic, author, created_at }) => [
       title,
       body,
-      votes,
+      votes || 0,
       topic,
       author,
       formatTimeStamp(created_at),
@@ -36,7 +35,19 @@ const seed = async ({ articleData, topicData, userData, commentData }) => {
   );
 
   const insertingArticles = await db.query(insertArticleQueryString);
-  console.log(insertingArticles.rows);
+
+  const insertingCommentsQueryString = format(
+    `INSERT INTO comment (author, article_id, votes, created_at, body) VALUES %L RETURNING *;`,
+    commentData.map(({ author, article_id, votes, created_at, body }) => [
+      author,
+      article_id,
+      votes || 0,
+      formatTimeStamp(created_at),
+      body,
+    ])
+  );
+
+  const insertingComments = await db.query(insertingCommentsQueryString);
 };
 
 module.exports = seed;

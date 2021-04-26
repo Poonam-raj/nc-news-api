@@ -11,7 +11,7 @@ exports.createTables = async () => {
     `CREATE TABLE article (article_id SERIAL PRIMARY KEY, title VARCHAR, body VARCHAR, votes INT DEFAULT 0, topic VARCHAR REFERENCES topic(slug), author VARCHAR REFERENCES "user"(username), created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);`
   );
   await db.query(
-    `CREATE TABLE comment (comment_id SERIAL PRIMARY KEY, author VARCHAR REFERENCES "user"(username), article_id INT REFERENCES article(article_id), votes INT DEFAULT 0, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, body VARCHAR);`
+    `CREATE TABLE comment (comment_id SERIAL PRIMARY KEY, author VARCHAR NOT NULL REFERENCES "user"(username), article_id INT NOT NULL REFERENCES article(article_id), votes INT DEFAULT 0, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, body VARCHAR);`
   );
 };
 
