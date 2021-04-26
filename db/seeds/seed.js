@@ -1,18 +1,42 @@
-const db = require('../connection');
-const { createTables, dropTables } = require('../seeds/manage-tables');
-const format = require('pg-format');
+const db = require("../connection");
+const { createTables, dropTables } = require("../seeds/manage-tables");
+const format = require("pg-format");
+const { formatTimeStamp } = require("../utils/data-manipulation");
 
-
-const seed = async({articleData, topicData, userData, commentData}) => {
+const seed = async ({ articleData, topicData, userData, commentData }) => {
   await dropTables();
   await createTables();
-  const insertTopicsQueryString = format(`INSERT INTO topics (slug, description) VALUES %L RETURNING *;`, topicData.map(({description, slug}) => [description, slug]));
+  const insertTopicsQueryString = format(
+    `INSERT INTO topic (slug, description) VALUES %L RETURNING *;`,
+    topicData.map(({ slug, description }) => [slug, description])
+  );
   const insertingTopics = await db.query(insertTopicsQueryString);
-  console.log(insertingTopics);
+  console.log(insertingTopics.rows);
+
+  const insertUserQueryString = format(
+    `INSERT INTO "user" (username, avatar_url, name) VALUES %L RETURNING *;`,
+    userData.map(({ username, avatar_url, name }) => [
+      username,
+      avatar_url,
+      name,
+    ])
+  );
+  const insertingUsers = await db.query(insertUserQueryString);
+
+  const insertArticleQueryString = format(
+    `INSERT INTO article (title, body, votes, topic, author, created_at) VALUES %L RETURNING *;`,
+    articleData.map(({ title, body, votes, topic, author, created_at }) => [
+      title,
+      body,
+      votes,
+      topic,
+      author,
+      formatTimeStamp(created_at),
+    ])
+  );
+
+  const insertingArticles = await db.query(insertArticleQueryString);
+  console.log(insertingArticles.rows);
 };
 
-seed();
-
-  // add seeding functionality here
-  // this function should take as argument(s) all the data it needs to seed
-  // it should insert this data into the relevant tables in your database
+module.exports = seed;
