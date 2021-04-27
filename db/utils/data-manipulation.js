@@ -3,14 +3,17 @@ exports.formatTimeStamp = (unix) => {
   return date;
 };
 
-exports.formatCommentAuthor = (comment) => {
-  const newComment = { ...comment, author: comment.created_by };
-  //take out spread -> possible error because of spreading a single item
-  delete newComment.created_by;
-  return newComment;
+exports.formatCommentAuthor = (commentData) => {
+  const copyOfCommentData = commentData.map((comment) => {
+    const newComment = { ...comment, author: comment.created_by };
+    delete newComment.created_by;
+    return newComment;
+  });
+  return copyOfCommentData;
 };
 
 exports.createLookup = (articles) => {
+  //this createLookup function could be changed to make it reusable;
   const finalLookup = {};
   articles.forEach((article) => {
     const articleKeys = Object.keys(article);
@@ -29,21 +32,12 @@ exports.createLookup = (articles) => {
   });
   return finalLookup;
 };
-//{'36': 'The vegan carnivore?'}
-//make title the key, id the value
 
-//this createLookup function could be changed to make it reusable;
-
-exports.formatCommentArticleID = (comment) => {
-  /* Take relevant "article_id" and assign it to a new key of "article_id" in the comment object
-   Delete "belongs_to"
-   */
-  const newComment = { ...comment };
-  return newComment;
+exports.formatCommentArticleID = (commentData, lookup) => {
+  const copyOfCommentData = commentData.map((comment) => {
+    const newComment = { ...comment, article_id: lookup[comment.belongs_to] };
+    delete newComment.belongs_to;
+    return newComment;
+  });
+  return copyOfCommentData;
 };
-
-//currently functions take whole comment, but in seed we apply it just to the key value in comment map...
-//change how we set up seed? (taking whole comment data first, then manipulating, then inserting into treasures)
-//Or change function and make it more specific?
-
-//reference object???

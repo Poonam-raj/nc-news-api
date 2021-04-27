@@ -17,35 +17,42 @@ describe("formatTimeStamp", () => {
 });
 
 describe("formatCommentAuthor", () => {
-  it("should return an object", () => {
-    expect(typeof formatCommentAuthor({})).toBe("object");
+  it("should return an array", () => {
+    expect(typeof formatCommentAuthor([{}])).toBe("object");
   });
   it("should return an object that has a different reference to the original object passed in, and does not mutate original input.", () => {
-    const input = {
-      body:
-        "Itaque quisquam est similique et est perspiciatis reprehenderit voluptatem autem. Voluptatem accusantium eius error adipisci quibusdam doloribus.",
-      created_by: "tickle122",
-      votes: -1,
-      created_at: 1590103140000,
-    };
+    const input = [
+      {
+        body:
+          "Itaque quisquam est similique et est perspiciatis reprehenderit voluptatem autem. Voluptatem accusantium eius error adipisci quibusdam doloribus.",
+        created_by: "tickle122",
+        votes: -1,
+        created_at: 1590103140000,
+      },
+    ];
     expect(formatCommentAuthor(input)).not.toBe(input);
-    expect(input).toEqual({
-      body:
-        "Itaque quisquam est similique et est perspiciatis reprehenderit voluptatem autem. Voluptatem accusantium eius error adipisci quibusdam doloribus.",
-      created_by: "tickle122",
-      votes: -1,
-      created_at: 1590103140000,
-    });
+    expect(input).toEqual([
+      {
+        body:
+          "Itaque quisquam est similique et est perspiciatis reprehenderit voluptatem autem. Voluptatem accusantium eius error adipisci quibusdam doloribus.",
+        created_by: "tickle122",
+        votes: -1,
+        created_at: 1590103140000,
+      },
+    ]);
   });
   it("should return an object with author key instead of created_by key", () => {
-    const input = {
-      body:
-        "Itaque quisquam est similique et est perspiciatis reprehenderit voluptatem autem. Voluptatem accusantium eius error adipisci quibusdam doloribus.",
-      created_by: "tickle122",
-      votes: -1,
-      created_at: 1590103140000,
-    };
-    expect(formatCommentAuthor(input)).toEqual(
+    const input = [
+      {
+        body:
+          "Itaque quisquam est similique et est perspiciatis reprehenderit voluptatem autem. Voluptatem accusantium eius error adipisci quibusdam doloribus.",
+        created_by: "tickle122",
+        belongs_to: "They're not exactly dogs, are they?",
+        votes: -1,
+        created_at: 1590103140000,
+      },
+    ];
+    expect(formatCommentAuthor(input)[0]).toEqual(
       expect.objectContaining({
         body: expect.any(String),
         author: expect.any(String),
@@ -53,7 +60,7 @@ describe("formatCommentAuthor", () => {
         created_at: expect.any(Number),
       })
     );
-    expect(formatCommentAuthor(input)).toEqual(
+    expect(formatCommentAuthor(input)[0]).toEqual(
       expect.not.objectContaining({
         created_by: expect.any(String),
       })
@@ -107,38 +114,58 @@ describe("createLookup", () => {
 });
 
 describe("formatCommentArticleID", () => {
-  it("should return an object", () => {
-    expect(typeof formatCommentArticleID({})).toBe("object");
+  it("should return an array", () => {
+    expect(typeof formatCommentArticleID([{}], {})).toBe("object");
   });
   it("should return an object that has a different reference to the original object passed in, and does not mutate original input.", () => {
-    const input = {
-      body:
-        "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-      belongs_to: "They're not exactly dogs, are they?",
-      created_by: "butter_bridge",
-      votes: 16,
-      created_at: 1586179020000,
-    };
-    expect(formatCommentArticleID(input)).not.toBe(input);
-    expect(input).toEqual({
-      body:
-        "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-      belongs_to: "They're not exactly dogs, are they?",
-      created_by: "butter_bridge",
-      votes: 16,
-      created_at: 1586179020000,
-    });
+    const input = [
+      {
+        body:
+          "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+        belongs_to: "They're not exactly dogs, are they?",
+        created_by: "butter_bridge",
+        votes: 16,
+        created_at: 1586179020000,
+      },
+    ];
+    expect(formatCommentArticleID(input, {})).not.toBe(input);
+    expect(input).toEqual([
+      {
+        body:
+          "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+        belongs_to: "They're not exactly dogs, are they?",
+        created_by: "butter_bridge",
+        votes: 16,
+        created_at: 1586179020000,
+      },
+    ]);
+  });
+  it('should return an array containing an object with key of "article_id" with value of id, instead of "belongs_to" key and value, when passed an array of objects and a lookup.', () => {
+    const input = [
+      {
+        body:
+          "Itaque quisquam est similique et est perspiciatis reprehenderit voluptatem autem. Voluptatem accusantium eius error adipisci quibusdam doloribus.",
+        created_by: "tickle122",
+        belongs_to: "They're not exactly dogs, are they?",
+        votes: -1,
+        created_at: 1590103140000,
+      },
+    ];
+
+    const lookup = { "They're not exactly dogs, are they?": 1 };
+    expect(formatCommentArticleID(input, lookup)[0]).toEqual(
+      expect.objectContaining({
+        body: expect.any(String),
+        created_by: expect.any(String),
+        article_id: expect.any(Number),
+        votes: expect.any(Number),
+        created_at: expect.any(Number),
+      })
+    );
+    expect(formatCommentArticleID(input, lookup)[0]).toEqual(
+      expect.not.objectContaining({
+        belongs_to: expect.any(String),
+      })
+    );
   });
 });
-//one more test required to check if belongs_to has been changed to article id and it's value is changed to id
-
-/*
-{
-  body:
-    "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-  belongs_to: "They're not exactly dogs, are they?",
-  created_by: 'butter_bridge',
-  votes: 16,
-  created_at: 1586179020000,
-},
-*/

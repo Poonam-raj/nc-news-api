@@ -4,7 +4,8 @@ const format = require("pg-format");
 const {
   formatTimeStamp,
   formatCommentAuthor,
-  createLookup
+  createLookup,
+  formatCommentArticleID,
 } = require("../utils/data-manipulation");
 
 const seed = async ({ articleData, topicData, userData, commentData }) => {
@@ -39,12 +40,18 @@ const seed = async ({ articleData, topicData, userData, commentData }) => {
   );
 
   const insertingArticles = await db.query(insertArticleQueryString);
-  console.log(createLookup(insertingArticles.rows));
+
+  const lookup = createLookup(insertingArticles.rows);
+
+  const commentAuthor = formatCommentAuthor(commentData);
+
+  const newComments = formatCommentArticleID(commentAuthor, lookup);
 
   const insertingCommentsQueryString = format(
     `INSERT INTO comment (author, article_id, votes, created_at, body) VALUES %L RETURNING *;`,
-    commentData.map(({ created_by, article_id, votes, created_at, body }) => [
-      formatCommentAuthor(created_by),
+
+    newComments.map(({ author, article_id, votes, created_at, body }) => [
+      author,
       article_id,
       votes || 0,
       formatTimeStamp(created_at),
