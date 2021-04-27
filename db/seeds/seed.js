@@ -1,7 +1,10 @@
-const db = require('../connection');
-const { createTables, dropTables } = require('../seeds/manage-tables');
-const format = require('pg-format');
-const { formatTimeStamp } = require('../utils/data-manipulation');
+const db = require("../connection");
+const { createTables, dropTables } = require("../seeds/manage-tables");
+const format = require("pg-format");
+const {
+  formatTimeStamp,
+  formatCommentAuthor,
+} = require("../utils/data-manipulation");
 
 const seed = async ({ articleData, topicData, userData, commentData }) => {
   await dropTables();
@@ -38,8 +41,8 @@ const seed = async ({ articleData, topicData, userData, commentData }) => {
 
   const insertingCommentsQueryString = format(
     `INSERT INTO comment (author, article_id, votes, created_at, body) VALUES %L RETURNING *;`,
-    commentData.map(({ author, article_id, votes, created_at, body }) => [
-      author,
+    commentData.map(({ created_by, article_id, votes, created_at, body }) => [
+      formatCommentAuthor(created_by),
       article_id,
       votes || 0,
       formatTimeStamp(created_at),
