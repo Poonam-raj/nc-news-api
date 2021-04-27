@@ -2,7 +2,7 @@ const {
   formatTimeStamp,
   formatCommentAuthor,
   formatCommentArticleID,
-  createLookup
+  createLookup,
 } = require("../db/utils/data-manipulation");
 
 describe("formatTimeStamp", () => {
@@ -61,43 +61,48 @@ describe("formatCommentAuthor", () => {
   });
 });
 
-describe('createLookup', () => {
-  it('should return an object ', () => {
+describe("createLookup", () => {
+  it("should return an object ", () => {
     const input = [];
-    expect(typeof createLookup(input)).toBe('object');
+    expect(typeof createLookup(input)).toBe("object");
   });
-  it('the object returned should contain a key of an"article_id" with its corresponding article title as the values when passed an array of one article object', () => {
-    const input = [{
-        article_id: 36,
-        title: 'The vegan carnivore?',
-        body: 'The chef Richard McGeown has faced...',
-        votes: 0,
-        topic: 'cooking',
-        author: 'tickle122',
-       }];
-    expect(createLookup(input)).toEqual({'36': 'The vegan carnivore?'})
-  });
-  it('should work for arrays containing multiple objects', () => {
+  it('the object returned should contain a key of a "title" with its corresponding "article_id" as the value when passed an array of one article object', () => {
     const input = [
       {
-        title: 'Living in the shadow of a great man',
-        topic: 'mitch',
-        author: 'butter_bridge',
-        body: 'I find this existence challenging',
+        article_id: 36,
+        title: "The vegan carnivore?",
+        body: "The chef Richard McGeown has faced...",
+        votes: 0,
+        topic: "cooking",
+        author: "tickle122",
+      },
+    ];
+    expect(createLookup(input)).toEqual({ "The vegan carnivore?": 36 });
+  });
+  it("should work for arrays containing multiple objects", () => {
+    const input = [
+      {
+        title: "Living in the shadow of a great man",
+        topic: "mitch",
+        author: "butter_bridge",
+        body: "I find this existence challenging",
         created_at: 1594329060000,
         votes: 100,
-        article_id: 1
+        article_id: 1,
       },
       {
-        title: 'Sony Vaio; or, The Laptop',
-        topic: 'mitch',
-        author: 'icellusedkars',
-        body:
-          'Call me Mitchell...',
+        title: "Sony Vaio; or, The Laptop",
+        topic: "mitch",
+        author: "icellusedkars",
+        body: "Call me Mitchell...",
         created_at: 1602828180000,
-        article_id: 2
-      }];
-      expect(createLookup(input)).toEqual({1: 'Living in the shadow of a great man', 2: 'Sony Vaio; or, The Laptop'})
+        article_id: 2,
+      },
+    ];
+    expect(createLookup(input)).toEqual({
+      "Living in the shadow of a great man": 1,
+      "Sony Vaio; or, The Laptop": 2,
+    });
   });
 });
 
