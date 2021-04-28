@@ -5,10 +5,11 @@ exports.fetchArticle = async (articleID) => {
     `SELECT article.*, COUNT(comment.comment_id) AS comment_count FROM article 
     LEFT JOIN comment ON comment.article_id = article.article_id
     WHERE article.article_id = $1
-    GROUP BY article.article_id `,
+    GROUP BY article.article_id;`,
     [articleID]
   );
   const article = articleResponse.rows;
+
   if (article.length === 0) {
     return Promise.reject({
       status: 404,
@@ -21,6 +22,7 @@ exports.fetchArticle = async (articleID) => {
 exports.updateArticle = async (articleID, body) => {
   const { inc_votes } = body;
   const bodyKeys = Object.keys(body);
+
   if (!inc_votes || typeof inc_votes !== "number" || bodyKeys.length > 1) {
     return Promise.reject({
       status: 400,
@@ -34,4 +36,14 @@ exports.updateArticle = async (articleID, body) => {
     );
     return this.fetchArticle(articleID);
   }
+};
+
+exports.fetchAllArticles = async () => {
+  const articlesResponse = await db.query(
+    `SELECT article.author, title, article.article_id, topic, article.created_at, article.votes, COUNT(comment.comment_id) AS comment_count FROM article 
+    LEFT JOIN comment ON comment.article_id = article.article_id
+    GROUP BY article.article_id;`
+  );
+  const articles = articlesResponse.rows;
+  return articles;
 };

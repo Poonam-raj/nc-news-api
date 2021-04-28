@@ -1,9 +1,12 @@
 const seed = require("../db/seeds/seed");
-const { fetchArticle, updateArticle } = require("../models/article.model");
+const {
+  fetchArticle,
+  updateArticle,
+  fetchAllArticles,
+} = require("../models/article.model");
 
 exports.getArticle = (req, res, next) => {
-  const { article_id } = req.params;
-  fetchArticle(article_id)
+  fetchArticle(req.params.article_id)
     .then((article) => {
       res.status(200).send({ article });
     })
@@ -11,11 +14,15 @@ exports.getArticle = (req, res, next) => {
 };
 
 exports.patchArticleByID = (req, res, next) => {
-  const { article_id } = req.params;
-  const { body } = req;
-  updateArticle(article_id, body)
+  updateArticle(req.params.article_id, req.body)
     .then((updatedArticle) => {
       res.status(200).send({ updatedArticle });
     })
     .catch(next);
+};
+
+exports.getAllArticles = (req, res, next) => {
+  fetchAllArticles().then((articles) => {
+    res.status(200).send({ articles });
+  });
 };
