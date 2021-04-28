@@ -123,7 +123,7 @@ describe("PATCH /api/articles/:article_id", () => {
 });
 
 describe("GET /api/articles", () => {
-  it("status:200, responds with an array of article objects.", () => {
+  it("status:200, responds with an array of article objects, default sort order is by date descending.", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -145,6 +145,9 @@ describe("GET /api/articles", () => {
             body: expect.any(String),
           })
         );
+        expect(body.articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
       });
   });
 });
