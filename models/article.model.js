@@ -17,3 +17,21 @@ exports.fetchArticle = async (articleID) => {
   }
   return article;
 };
+
+exports.updateArticle = async (articleID, body) => {
+  const { inc_votes } = body;
+  const bodyKeys = Object.keys(body);
+  if (!inc_votes || typeof inc_votes !== "number" || bodyKeys.length > 1) {
+    return Promise.reject({
+      status: 400,
+      msg: `Bad request: malformed body`,
+    });
+  } else {
+    await db.query(
+      `UPDATE article SET 
+  votes = votes + $1 WHERE article_id = $2;`,
+      [inc_votes, articleID]
+    );
+    return this.fetchArticle(articleID);
+  }
+};
