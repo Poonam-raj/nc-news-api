@@ -13,7 +13,7 @@ afterAll(() => {
 });
 
 describe("GET /api/topics", () => {
-  it("server:200, should respond with an object containing all topics ", () => {
+  it("status:200, should respond with an object containing all topics ", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -25,6 +25,45 @@ describe("GET /api/topics", () => {
             slug: expect.any(String),
           })
         );
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id", () => {
+  it("status:200, responds with a specific article object based on article_id in the route.", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toHaveLength(1);
+        expect(body.article[0]).toEqual(
+          expect.objectContaining({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            body: expect.any(String),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            comment_count: expect.any(String),
+          })
+        );
+      });
+  });
+  it("status:404, responds with a 404 error when passed a article id which does not exist in the database.", () => {
+    return request(app)
+      .get("/api/articles/24")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("No article found for article_id: 24.");
+      });
+  });
+  it("status:400, responds with a 400 error when passed an invalid ID.", () => {
+    return request(app)
+      .get("/api/articles/not-an-ID")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Invalid ID");
       });
   });
 });
