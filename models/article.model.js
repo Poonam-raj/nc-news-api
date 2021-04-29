@@ -1,5 +1,5 @@
 const db = require("../db/connection");
-const { isMalformedBody } = require("./utils.models");
+const { isMalformedBody, checkColumnExists } = require("./utils.models");
 
 exports.fetchArticle = async (articleID) => {
   const articleResponse = await db.query(
@@ -38,15 +38,20 @@ exports.fetchAllArticles = async (
   order = "DESC",
   topic
 ) => {
+  // if (sort_by !== "comment_count") {
+  //   const result = await db.query(`SELECT $1 FROM article;`, [sort_by]);
+  //   console.log(result);
+  //   const columnCheck = await checkColumnExists(sort_by);
+  //   if (!columnCheck)
+  //     return Promise.reject({ status: 400, msg: "Bad Request" });
+  // }
   let queryStr = `
   SELECT article.author, title, article.article_id, topic, article.created_at, article.votes, COUNT(comment.comment_id) AS comment_count 
   FROM article 
   LEFT JOIN comment ON comment.article_id = article.article_id`;
 
   const queryValues = [];
-  if (sort_by !== ["title", "topic"]) {
-    sort_by = "article." + sort_by;
-  }
+
   if (topic) {
     queryStr += ` WHERE topic = $1`;
     queryValues.push(topic);
