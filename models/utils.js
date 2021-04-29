@@ -1,3 +1,5 @@
+const db = require("../db/connection");
+
 exports.isMalformedBody = (key, body) => {
   const bodyKeys = Object.keys(body);
   if (typeof key !== "number" || bodyKeys.length > 1) {
@@ -8,7 +10,7 @@ exports.isMalformedBody = (key, body) => {
   }
 };
 
-exports.checkQuery = (sort_by, order) => {
+exports.checkQuery = async (sort_by, order) => {
   const acceptedColumns = [
     "author",
     "title",
@@ -28,13 +30,20 @@ exports.checkQuery = (sort_by, order) => {
   }
 };
 
-exports.formFetchArticleQueryStr = (sort_by, order, topic) => {
+exports.formFetchArticleQueryStr = async (sort_by, order, topic) => {
   let queryStr = `
   SELECT article.author, title, article.article_id, topic, article.created_at, article.votes, COUNT(comment.comment_id) AS comment_count 
   FROM article 
   LEFT JOIN comment ON comment.article_id = article.article_id`;
   const queryValues = [];
+
   if (topic) {
+    const topicSlugs = await db.query(`SELECT slug FROM topic;`);
+    const acceptedTopics = topicSlugs.rows.map((slug) => slug.slug);
+    if (!acceptedTopics.includes(topic)) {
+      return Promise.reject({ status: 404, msg: "Not Found" });
+    }
+
     queryStr += ` WHERE topic = $1`;
     queryValues.push(topic);
   }

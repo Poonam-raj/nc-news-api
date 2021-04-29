@@ -1,1 +1,8 @@
 You are now connected to database "nc_news_test" as user "poonamraj".
+ slug  
+-------
+ mitch
+ cats
+ paper
+(3 rows)
+

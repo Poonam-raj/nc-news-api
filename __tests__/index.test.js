@@ -249,6 +249,14 @@ describe("GET /api/articles", () => {
         expect(body.msg).toBe("Bad Query: cat");
       });
   });
+  it('status:404, responds with "Not Found" when "topic" is not in database.', () => {
+    return request(app)
+      .get("/api/articles?topic=network")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
   /*
   404: author or topic is not in database
   200: author or topic exists but does not have any articles associated with it
