@@ -193,7 +193,6 @@ describe("GET /api/articles", () => {
         });
       });
   });
-
   it("status:200, should accept a query including a sort_by parameter to sort by any valid column (default order Desc).", () => {
     return request(app)
       .get("/api/articles?sort_by=title")
@@ -225,7 +224,6 @@ describe("GET /api/articles", () => {
         });
       });
   });
-
   it("status:200, should accept a query including a topic, sort_by and order parameter to filter results by topic slug in a specific sort order.", () => {
     return request(app)
       .get("/api/articles?topic=mitch&sort_by=author&order=asc")
@@ -235,18 +233,23 @@ describe("GET /api/articles", () => {
         expect(body.articles).toBeSortedBy("author");
       });
   });
-
-  it("status:400, responds with error when sort_by column does not exist.", () => {
+  it("status:400, responds with 'Bad Query: {sort_by}' when 'sort_by' column does not exist.", () => {
     return request(app)
       .get("/api/articles?sort_by=dog")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad Query");
+        expect(body.msg).toBe("Bad Query: dog");
       });
   });
-
-  /*400:  column doesn't exist
-  400: order isn't asc or desc
+  it('status:400, responds with "Bad Query" when "order" is not defined as "asc" or "desc"', () => {
+    return request(app)
+      .get("/api/articles?order=cat")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Query: cat");
+      });
+  });
+  /*
   404: author or topic is not in database
   200: author or topic exists but does not have any articles associated with it
   */
