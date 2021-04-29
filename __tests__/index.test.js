@@ -182,4 +182,46 @@ describe("GET /api/articles", () => {
         });
       });
   });
+
+  it("status:200, should accept a query including a sort_by parameter to sort by any valid column (default order Desc).", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(12);
+        expect(body.articles).toBeSortedBy("title", {
+          descending: true,
+        });
+      });
+  });
+  it("status:200, should accept a query including a order parameter to alter order of sort to ascending.", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(12);
+        expect(body.articles).toBeSortedBy("created_at");
+      });
+  });
+  it("status:200, should accept a query including a topic parameter to filter results by topic slug.", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(1);
+        expect(body.articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+
+  it("status:200, should accept a query including a topic, sort_by and order parameter to filter results by topic slug in a specific sort order.", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=author&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(11);
+        expect(body.articles).toBeSortedBy("author");
+      });
+  });
 });

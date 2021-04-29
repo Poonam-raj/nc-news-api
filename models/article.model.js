@@ -29,16 +29,32 @@ exports.updateArticle = async (articleID, body) => {
   votes = votes + $1 WHERE article_id = $2;`,
     [inc_votes, articleID]
   );
+
   return this.fetchArticle(articleID);
 };
 
-exports.fetchAllArticles = async (sort_by = "created_at", order = "DESC") => {
-  const articlesResponse = await db.query(
-    `SELECT article.author, title, article.article_id, topic, article.created_at, article.votes, COUNT(comment.comment_id) AS comment_count FROM article 
-    LEFT JOIN comment ON comment.article_id = article.article_id
-    GROUP BY article.article_id
-    ORDER BY ${sort_by} ${order};`
-  );
-  const { rows } = articlesResponse;
-  return rows;
+exports.fetchAllArticles = async (
+  sort_by = "created_at",
+  order = "DESC",
+  topic
+) => {
+  let queryStr = `
+  SELECT article.author, title, article.article_id, topic, article.created_at, article.votes, COUNT(comment.comment_id) AS comment_count 
+  FROM article 
+  LEFT JOIN comment ON comment.article_id = article.article_id`;
+
+  const queryValues = [];
+  if (sort_by !== ["title", "topic"]) {
+    sort_by = "article." + sort_by;
+  }
+  if (topic) {
+    queryStr += ` WHERE topic = $1`;
+    queryValues.push(topic);
+  }
+
+  queryStr += ` GROUP BY article.article_id
+  ORDER BY ${sort_by} ${order};`;
+
+  const articlesResponse = await db.query(queryStr, queryValues);
+  return articlesResponse.rows;
 };
