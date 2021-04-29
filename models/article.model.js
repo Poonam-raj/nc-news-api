@@ -1,5 +1,5 @@
 const db = require("../db/connection");
-const { isMalformedBody, checkColumnExists } = require("./utils.models");
+const { isMalformedBody } = require("./utils.models");
 
 exports.fetchArticle = async (articleID) => {
   const articleResponse = await db.query(
@@ -38,13 +38,20 @@ exports.fetchAllArticles = async (
   order = "DESC",
   topic
 ) => {
-  // if (sort_by !== "comment_count") {
-  //   const result = await db.query(`SELECT $1 FROM article;`, [sort_by]);
-  //   console.log(result);
-  //   const columnCheck = await checkColumnExists(sort_by);
-  //   if (!columnCheck)
-  //     return Promise.reject({ status: 400, msg: "Bad Request" });
-  // }
+  const acceptedColumns = [
+    "author",
+    "title",
+    "article_id",
+    "topic",
+    "created_at",
+    "votes",
+    "comment_count",
+  ];
+
+  if (!acceptedColumns.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "Bad Query" });
+  }
+
   let queryStr = `
   SELECT article.author, title, article.article_id, topic, article.created_at, article.votes, COUNT(comment.comment_id) AS comment_count 
   FROM article 
@@ -61,5 +68,6 @@ exports.fetchAllArticles = async (
   ORDER BY ${sort_by} ${order};`;
 
   const articlesResponse = await db.query(queryStr, queryValues);
+
   return articlesResponse.rows;
 };
