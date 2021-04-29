@@ -19,12 +19,14 @@ describe("GET /api/topics", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.topics).toHaveLength(3);
-        expect(body.topics[0]).toEqual(
-          expect.objectContaining({
-            description: expect.any(String),
-            slug: expect.any(String),
-          })
-        );
+        body.topics.forEach((topic) => {
+          expect(topic).toEqual(
+            expect.objectContaining({
+              description: expect.any(String),
+              slug: expect.any(String),
+            })
+          );
+        });
       });
   });
 });
@@ -55,7 +57,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/24")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toEqual("No article found for article_id: 24.");
+        expect(body.msg).toEqual("Article_id: 24 is invalid.");
       });
   });
   it("status:400, responds with a 400 error when passed an invalid ID.", () => {
@@ -91,7 +93,7 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 
-  it("status: 400, responds with a Bad Request error message when passed a malformed body.", () => {
+  it("status:400, responds with a Bad Request error message when passed a malformed body.", () => {
     return request(app)
       .patch("/api/articles/1")
       .send({})
@@ -101,7 +103,7 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 
-  it("status: 400, responds with a Bad Request error message when passed a value with incorrect type.", () => {
+  it("status:400, responds with a Bad Request error message when passed a value with incorrect type.", () => {
     return request(app)
       .patch("/api/articles/1")
       .send({ inc_votes: "dog" })
@@ -110,14 +112,42 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(body.msg).toEqual("Bad request: malformed body");
       });
   });
+  it("status:400, responds with a Bad Request error message when passed an incorrect key.", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ dog: -25 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request: malformed body");
+      });
+  });
 
-  it("status: 400, responds with Bad Request error when passed some other property on request body.", () => {
+  it("status:400, responds with Bad Request error when passed some other property on request body.", () => {
     return request(app)
       .patch("/api/articles/1")
       .send({ inc_votes: 1, name: "Mitch" })
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toEqual("Bad request: malformed body");
+      });
+  });
+
+  it("status:404, responds with a 404 error when passed an article id which does not exist in the database.", () => {
+    return request(app)
+      .patch("/api/articles/35")
+      .send({ inc_votes: -25 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Article_id: 35 is invalid.");
+      });
+  });
+  it("status:400, responds with a 400 error when passed an invalid ID.", () => {
+    return request(app)
+      .patch("/api/articles/is-dog")
+      .send({ inc_votes: -25 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Invalid ID");
       });
   });
 });
@@ -129,22 +159,24 @@ describe("GET /api/articles", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toHaveLength(12);
-        expect(body.articles[0]).toEqual(
-          expect.objectContaining({
-            author: expect.any(String),
-            title: expect.any(String),
-            article_id: expect.any(Number),
-            topic: expect.any(String),
-            created_at: expect.any(String),
-            votes: expect.any(Number),
-            comment_count: expect.any(String),
-          })
-        );
-        expect(body.articles[0]).not.toEqual(
-          expect.objectContaining({
-            body: expect.any(String),
-          })
-        );
+        body.articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              author: expect.any(String),
+              title: expect.any(String),
+              article_id: expect.any(Number),
+              topic: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              comment_count: expect.any(String),
+            })
+          );
+          expect(article).not.toEqual(
+            expect.objectContaining({
+              body: expect.any(String),
+            })
+          );
+        });
         expect(body.articles).toBeSortedBy("created_at", {
           descending: true,
         });
