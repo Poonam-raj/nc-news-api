@@ -1,5 +1,9 @@
 const db = require("../db/connection");
-const { isMalformedBody } = require("./utils");
+const {
+  isMalformedBody,
+  checkQuery,
+  formFetchArticleQueryStr,
+} = require("./utils");
 
 exports.fetchArticle = async (articleID) => {
   const articleResponse = await db.query(
@@ -38,36 +42,13 @@ exports.fetchAllArticles = async (
   order = "DESC",
   topic
 ) => {
-  const acceptedColumns = [
-    "author",
-    "title",
-    "article_id",
-    "topic",
-    "created_at",
-    "votes",
-    "comment_count",
-  ];
-
-  if (!acceptedColumns.includes(sort_by)) {
-    return Promise.reject({ status: 400, msg: "Bad Query" });
-  }
-
-  let queryStr = `
-  SELECT article.author, title, article.article_id, topic, article.created_at, article.votes, COUNT(comment.comment_id) AS comment_count 
-  FROM article 
-  LEFT JOIN comment ON comment.article_id = article.article_id`;
-
-  const queryValues = [];
-
-  if (topic) {
-    queryStr += ` WHERE topic = $1`;
-    queryValues.push(topic);
-  }
-
-  queryStr += ` GROUP BY article.article_id
-  ORDER BY ${sort_by} ${order};`;
+  await checkQuery(sort_by, order);
+  const { queryStr, queryValues } = await formFetchArticleQueryStr(
+    sort_by,
+    order,
+    topic
+  );
 
   const articlesResponse = await db.query(queryStr, queryValues);
-
   return articlesResponse.rows;
 };
