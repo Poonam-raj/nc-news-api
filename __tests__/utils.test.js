@@ -5,6 +5,8 @@ const {
   createLookup,
 } = require("../db/utils/data-manipulation");
 
+const { checkColumnExists } = require("../models/utils.models");
+
 describe("formatTimeStamp", () => {
   it("returns a date object.", () => {
     expect(typeof formatTimeStamp(1594329060000)).toBe("object");
@@ -169,3 +171,13 @@ describe("formatCommentArticleID", () => {
     );
   });
 });
+
+// describe.only("checkColumnExists", () => {
+//   it("returns false when passed an empty string", () => {
+//     expect(checkColumnExists("")).toBe(false);
+//   });
+//   it("returns a error message when passed an invalid column", () => {
+//     const sort_by = "dog";
+//     expect(checkColumnExists(sort_by)).toBe(false);
+//   });
+// });
