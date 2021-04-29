@@ -48,7 +48,6 @@ exports.fetchAllArticles = async (
     order,
     topic
   );
-
   const articlesResponse = await db.query(queryStr, queryValues);
   return articlesResponse.rows;
 };

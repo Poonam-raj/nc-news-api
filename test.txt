@@ -1,8 +1,8 @@
 You are now connected to database "nc_news_test" as user "poonamraj".
- slug  
--------
- mitch
- cats
- paper
+ slug  |          description           | article_count 
+-------+--------------------------------+---------------
+ cats  | Not dogs                       |             1
+ paper | what books are made of         |             0
+ mitch | The man, the Mitch, the legend |            11
 (3 rows)
 

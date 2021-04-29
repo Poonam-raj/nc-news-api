@@ -257,8 +257,12 @@ describe("GET /api/articles", () => {
         expect(body.msg).toBe("Not Found");
       });
   });
-  /*
-  404: author or topic is not in database
-  200: author or topic exists but does not have any articles associated with it
-  */
+  it('status:200, responds with an empty array when "topic" is existing but has no articles associated with it.', () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toEqual([]);
+      });
+  });
 });
