@@ -224,4 +224,19 @@ describe("GET /api/articles", () => {
         expect(body.articles).toBeSortedBy("author");
       });
   });
+
+  /*it("status:400, responds with error when sort_by column does not exist.", () => {
+    return request(app)
+      .get("/api/articles?sort_by=dog")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Query");
+      });
+  });*/
+
+  /*400:  column doesn't exist
+  400: order isn't asc or desc
+  404: author or topic is not in database
+  200: author or topic exists but does not have any articles associated with it
+  */
 });
