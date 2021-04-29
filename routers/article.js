@@ -3,7 +3,7 @@ const {
   getArticle,
   patchArticleByID,
   getAllArticles,
-} = require("../controllers/article.controller");
+} = require("../controllers/article");
 const articleRouter = express.Router();
 
 articleRouter.route("/:article_id").get(getArticle).patch(patchArticleByID);

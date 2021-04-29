@@ -1,6 +1,6 @@
 const express = require("express");
-const { getTopics } = require("../controllers/api.controller");
-const articleRouter = require("./article.router");
+const { getTopics } = require("../controllers/api");
+const articleRouter = require("./article");
 
 const apiRouter = express.Router();
 

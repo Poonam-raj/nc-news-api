@@ -1,5 +1,5 @@
 const db = require("../db/connection");
-const { isMalformedBody } = require("./utils.models");
+const { isMalformedBody } = require("./utils");
 
 exports.fetchArticle = async (articleID) => {
   const articleResponse = await db.query(

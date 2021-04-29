@@ -3,7 +3,7 @@ const {
   fetchArticle,
   updateArticle,
   fetchAllArticles,
-} = require("../models/article.model");
+} = require("../models/article");
 
 exports.getArticle = (req, res, next) => {
   fetchArticle(req.params.article_id)
