@@ -15,10 +15,10 @@ afterAll(() => {
 describe("routes that don't exist.", () => {
   it("status:404, and not found message", () => {
     return request(app)
-      .get("not-a-route-mate")
+      .get("/not-a-route-mate")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg), toBe("Route Not Found");
+        expect(body.msg).toBe("Route Not Found");
       });
   });
 });
