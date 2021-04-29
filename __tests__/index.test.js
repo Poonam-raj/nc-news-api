@@ -225,14 +225,14 @@ describe("GET /api/articles", () => {
       });
   });
 
-  /*it("status:400, responds with error when sort_by column does not exist.", () => {
+  it("status:400, responds with error when sort_by column does not exist.", () => {
     return request(app)
       .get("/api/articles?sort_by=dog")
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad Query");
       });
-  });*/
+  });
 
   /*400:  column doesn't exist
   400: order isn't asc or desc
