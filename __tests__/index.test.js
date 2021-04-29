@@ -12,6 +12,17 @@ afterAll(() => {
   db.end();
 });
 
+describe("routes that don't exist.", () => {
+  it("status:404, and not found message", () => {
+    return request(app)
+      .get("not-a-route-mate")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg), toBe("Route Not Found");
+      });
+  });
+});
+
 describe("GET /api/topics", () => {
   it("status:200, should respond with an object containing all topics ", () => {
     return request(app)
