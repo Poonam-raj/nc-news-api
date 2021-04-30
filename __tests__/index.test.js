@@ -266,3 +266,23 @@ describe("GET /api/articles", () => {
       });
   });
 });
+
+describe("GET /api/articles/:article_id/comments", () => {
+  it("status:200, responds with an array of comments for a given article_id", () => {
+    const path = "/api/articles/1/comments";
+    return request(app)
+      .get(path)
+      .expect(200)
+      .then(({ body }) => {
+        body.comments.forEach((comment) => {
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+          });
+        });
+      });
+  });
+});
