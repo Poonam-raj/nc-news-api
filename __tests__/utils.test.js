@@ -5,7 +5,7 @@ const {
   createLookup,
 } = require("../db/utils/data-manipulation");
 
-const { checkColumnExists } = require("../models/utils.models");
+const { checkColumnExists } = require("../models/utils");
 
 describe("formatTimeStamp", () => {
   it("returns a date object.", () => {
