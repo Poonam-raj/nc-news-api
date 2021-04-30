@@ -32,13 +32,13 @@ exports.checkQuery = async (sort_by, order) => {
 
 exports.formFetchArticleQueryStr = async (sort_by, order, topic) => {
   let queryStr = `
-  SELECT article.author, title, article.article_id, topic, article.created_at, article.votes, COUNT(comment.comment_id) AS comment_count 
-  FROM article 
-  LEFT JOIN comment ON comment.article_id = article.article_id`;
+  SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, COUNT(comments.comment_id) AS comment_count 
+  FROM articles 
+  LEFT JOIN comments ON comments.article_id = articles.article_id`;
   const queryValues = [];
 
   if (topic) {
-    const topicSlugs = await db.query(`SELECT slug FROM topic;`);
+    const topicSlugs = await db.query(`SELECT slug FROM topics;`);
     const acceptedTopics = topicSlugs.rows.map((slug) => slug.slug);
     if (!acceptedTopics.includes(topic)) {
       return Promise.reject({ status: 404, msg: "Not Found" });
@@ -47,7 +47,7 @@ exports.formFetchArticleQueryStr = async (sort_by, order, topic) => {
     queryStr += ` WHERE topic = $1`;
     queryValues.push(topic);
   }
-  queryStr += ` GROUP BY article.article_id
+  queryStr += ` GROUP BY articles.article_id
   ORDER BY ${sort_by} ${order};`;
 
   return { queryStr, queryValues };

@@ -7,10 +7,10 @@ const {
 
 exports.fetchArticle = async (articleID) => {
   const articleResponse = await db.query(
-    `SELECT article.*, COUNT(comment.comment_id) AS comment_count FROM article 
-    LEFT JOIN comment ON comment.article_id = article.article_id
-    WHERE article.article_id = $1
-    GROUP BY article.article_id;`,
+    `SELECT articles.*, COUNT(comments.comment_id) AS comment_count FROM articles 
+    LEFT JOIN comments ON comments.article_id = articles.article_id
+    WHERE articles.article_id = $1
+    GROUP BY articles.article_id;`,
     [articleID]
   );
   const { rows } = articleResponse;
@@ -29,7 +29,7 @@ exports.updateArticle = async (articleID, body) => {
   const { inc_votes } = body;
   await isMalformedBody(inc_votes, body);
   await db.query(
-    `UPDATE article SET 
+    `UPDATE articles SET 
   votes = votes + $1 WHERE article_id = $2;`,
     [inc_votes, articleID]
   );

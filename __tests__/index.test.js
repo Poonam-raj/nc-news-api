@@ -49,6 +49,16 @@ describe("GET /api/articles/:article_id", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.article).toHaveLength(1);
+        expect(body.article[0]).toEqual({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          body: "I find this existence challenging",
+          votes: 100,
+          topic: "mitch",
+          author: "butter_bridge",
+          created_at: "2020-07-09T20:11:00.000Z",
+          comment_count: "13",
+        });
         expect(body.article[0]).toEqual(
           expect.objectContaining({
             author: expect.any(String),
@@ -103,7 +113,6 @@ describe("PATCH /api/articles/:article_id", () => {
         );
       });
   });
-
   it("status:400, responds with a Bad Request error message when passed a malformed body.", () => {
     return request(app)
       .patch("/api/articles/1")
@@ -285,4 +294,12 @@ describe("GET /api/articles/:article_id/comments", () => {
         });
       });
   });
+  /*
+    sad path:
+     - non-existent article ID (not found, 9999)
+     - invalid ID (bad request, dog)
+     - valid ID but no comments (200, empty array)
+
+
+  */
 });
