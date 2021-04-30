@@ -280,12 +280,30 @@ describe("GET /api/articles/:article_id/comments", () => {
         });
       });
   });
-  /*
-    sad path:
-     - non-existent article ID (not found, 9999)
-     - invalid ID (bad request, dog)
-     - valid ID but no comments (200, empty array)
 
-
-  */
+  it("status:404, responds with a 404 error when passed a article id which does not exist in the database.", () => {
+    return request(app)
+      .get("/api/articles/24/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Article_id: 24 is invalid.");
+      });
+  });
+  it("status:400, responds with a 400 error when passed an invalid ID.", () => {
+    return request(app)
+      .get("/api/articles/not-an-ID/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Invalid ID");
+      });
+  });
+  it("status:200, responds with empty array when passed a valid article_id with no comments associated with it.", () => {
+    const path = "/api/articles/4/comments";
+    return request(app)
+      .get(path)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
+      });
+  });
 });
