@@ -52,3 +52,16 @@ exports.formFetchArticleQueryStr = async (sort_by, order, topic) => {
 
   return { queryStr, queryValues };
 };
+
+exports.checkArticleID = async (articleID) => {
+  const isValidArticleID = await db.query(
+    `SELECT * FROM articles WHERE article_id = $1;`,
+    [articleID]
+  );
+  if (isValidArticleID.rowCount === 0) {
+    return Promise.reject({
+      status: 404,
+      msg: `Article_id: ${articleID} is invalid.`,
+    });
+  }
+};
