@@ -5,8 +5,6 @@ const {
   createLookup,
 } = require("../db/utils/data-manipulation");
 
-const { checkColumnExists } = require("../models/utils");
-
 describe("formatTimeStamp", () => {
   it("returns a date object.", () => {
     expect(typeof formatTimeStamp(1594329060000)).toBe("object");
@@ -15,6 +13,11 @@ describe("formatTimeStamp", () => {
   it("converts unix timestamp to 'DD/MM/YYYY hh:mm:ss' format.", () => {
     const unix = 1594329060000;
     expect(formatTimeStamp(unix)).toEqual(new Date(1594329060000));
+  });
+  it("does not mutate the original input", () => {
+    const unix = 1594329060000;
+    expect(formatTimeStamp(unix)).toEqual(new Date(1594329060000));
+    expect(unix).toEqual(1594329060000);
   });
 });
 
@@ -54,19 +57,16 @@ describe("formatCommentAuthor", () => {
         created_at: 1590103140000,
       },
     ];
-    expect(formatCommentAuthor(input)[0]).toEqual(
-      expect.objectContaining({
-        body: expect.any(String),
-        author: expect.any(String),
-        votes: expect.any(Number),
-        created_at: expect.any(Number),
-      })
-    );
-    expect(formatCommentAuthor(input)[0]).toEqual(
-      expect.not.objectContaining({
-        created_by: expect.any(String),
-      })
-    );
+    expect(formatCommentAuthor(input)).toEqual([
+      {
+        body:
+          "Itaque quisquam est similique et est perspiciatis reprehenderit voluptatem autem. Voluptatem accusantium eius error adipisci quibusdam doloribus.",
+        author: "tickle122",
+        belongs_to: "They're not exactly dogs, are they?",
+        votes: -1,
+        created_at: 1590103140000,
+      },
+    ]);
   });
 });
 
@@ -113,11 +113,34 @@ describe("createLookup", () => {
       "Sony Vaio; or, The Laptop": 2,
     });
   });
+  it("no mutation of original input", () => {
+    const input = [
+      {
+        article_id: 36,
+        title: "The vegan carnivore?",
+        body: "The chef Richard McGeown has faced...",
+        votes: 0,
+        topic: "cooking",
+        author: "tickle122",
+      },
+    ];
+    expect(createLookup(input)).toEqual({ "The vegan carnivore?": 36 });
+    expect(input).toEqual([
+      {
+        article_id: 36,
+        title: "The vegan carnivore?",
+        body: "The chef Richard McGeown has faced...",
+        votes: 0,
+        topic: "cooking",
+        author: "tickle122",
+      },
+    ]);
+  });
 });
 
 describe("formatCommentArticleID", () => {
   it("should return an array", () => {
-    expect(typeof formatCommentArticleID([{}], {})).toBe("object");
+    expect(Array.isArray(formatCommentArticleID([{}], {}))).toBe(true);
   });
   it("should return an object that has a different reference to the original object passed in, and does not mutate original input.", () => {
     const input = [
@@ -171,13 +194,3 @@ describe("formatCommentArticleID", () => {
     );
   });
 });
-
-// describe.only("checkColumnExists", () => {
-//   it("returns false when passed an empty string", () => {
-//     expect(checkColumnExists("")).toBe(false);
-//   });
-//   it("returns a error message when passed an invalid column", () => {
-//     const sort_by = "dog";
-//     expect(checkColumnExists(sort_by)).toBe(false);
-//   });
-// });
