@@ -48,8 +48,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
-        expect(body.article).toHaveLength(1);
-        expect(body.article[0]).toEqual({
+        expect(body.article).toEqual({
           article_id: 1,
           title: "Living in the shadow of a great man",
           body: "I find this existence challenging",
@@ -59,18 +58,6 @@ describe("GET /api/articles/:article_id", () => {
           created_at: "2020-07-09T20:11:00.000Z",
           comment_count: "13",
         });
-        expect(body.article[0]).toEqual(
-          expect.objectContaining({
-            author: expect.any(String),
-            title: expect.any(String),
-            article_id: expect.any(Number),
-            body: expect.any(String),
-            topic: expect.any(String),
-            created_at: expect.any(String),
-            votes: expect.any(Number),
-            comment_count: expect.any(String),
-          })
-        );
       });
   });
   it("status:404, responds with a 404 error when passed a article id which does not exist in the database.", () => {
@@ -98,12 +85,11 @@ describe("PATCH /api/articles/:article_id", () => {
       .send({ inc_votes: -25 })
       .expect(200)
       .then(({ body }) => {
-        expect(body.updatedArticle).toHaveLength(1);
-        expect(body.updatedArticle[0]).toEqual(
+        expect(body.article).toEqual(
           expect.objectContaining({
             author: expect.any(String),
             title: expect.any(String),
-            article_id: expect.any(Number),
+            article_id: 1,
             body: expect.any(String),
             topic: expect.any(String),
             created_at: expect.any(String),
