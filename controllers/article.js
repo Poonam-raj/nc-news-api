@@ -8,7 +8,7 @@ const {
 exports.getArticle = (req, res, next) => {
   fetchArticle(req.params.article_id)
     .then((article) => {
-      res.status(200).send({ article });
+      res.status(200).send({ article: article[0] });
     })
     .catch(next);
 };
@@ -16,7 +16,7 @@ exports.getArticle = (req, res, next) => {
 exports.patchArticleByID = (req, res, next) => {
   updateArticle(req.params.article_id, req.body)
     .then((updatedArticle) => {
-      res.status(200).send({ updatedArticle });
+      res.status(200).send({ article: updatedArticle[0] });
     })
     .catch(next);
 };
