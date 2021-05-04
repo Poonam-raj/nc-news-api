@@ -307,3 +307,40 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("POST /api/articles/:article_id/comments", () => {
+  it("status:201, posts a given comment into the comment database and responds with the posted comment.", () => {
+    const path = "/api/articles/8/comments";
+    return request(app)
+      .post(path)
+      .send({ username: "lurker", body: "this is my comment" })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toEqual(
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            article_id: 8,
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: "lurker",
+            body: "this is my comment",
+          })
+        );
+      });
+  });
+});
+/*
+ 
+  sad path: 
+    - incorrect article ID (wrong format)
+    - invalid article ID (article does not exist)
+    - malformed body
+        - additional property
+        - wrong property value types
+        - wrong properties
+        - missing data
+    
+GET /api
+  happy path: responds with JSON object of all available API endpoints
+  
+  */
