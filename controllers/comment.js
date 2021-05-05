@@ -1,4 +1,5 @@
 const { fetchCommentsByID, insertComment } = require("../models/comment");
+const { isMalformedBody } = require("../models/utils");
 
 exports.getCommentsByArticleID = (req, res, next) => {
   fetchCommentsByID(req.params.article_id)
@@ -9,8 +10,7 @@ exports.getCommentsByArticleID = (req, res, next) => {
 };
 
 exports.postCommentByArticleID = (req, res, next) => {
-  const { username, body } = req.body;
-  insertComment(req.params.article_id, username, body)
+  insertComment(req.params.article_id, req.body)
     .then((comment) => {
       res.status(201).send({ comment });
     })

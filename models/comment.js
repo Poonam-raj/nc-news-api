@@ -1,5 +1,5 @@
 const db = require("../db/connection");
-const { checkArticleID } = require("./utils");
+const { checkArticleID, isMalformedBody } = require("./utils");
 
 exports.fetchCommentsByID = async (articleID) => {
   const commentsResponse = await db.query(
@@ -12,7 +12,16 @@ exports.fetchCommentsByID = async (articleID) => {
   return commentsResponse.rows;
 };
 
-exports.insertComment = async (articleID, username, body) => {
+exports.insertComment = async (articleID, reqBody) => {
+  const { username, body } = reqBody;
+  const expectedKeys = { username: "string", body: "string" };
+  const checkBody = await isMalformedBody(expectedKeys, reqBody);
+  if (checkBody) {
+    return Promise.reject({
+      status: 400,
+      msg: `Bad request: malformed body`,
+    });
+  }
   const insertedComment = await db.query(
     `
   INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING *;`,
