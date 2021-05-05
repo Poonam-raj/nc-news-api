@@ -65,7 +65,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/24")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Article_id: 24 is invalid.");
+        expect(body.msg).toEqual("Article with ID 24 not found.");
       });
   });
   it("status:400, responds with a 400 error when passed an invalid ID.", () => {
@@ -144,7 +144,7 @@ describe("PATCH /api/articles/:article_id", () => {
       .send({ inc_votes: -25 })
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Article_id: 35 is invalid.");
+        expect(body.msg).toEqual("Article with ID 35 not found.");
       });
   });
   it("status:400, responds with a 400 error when passed an invalid ID.", () => {
@@ -249,7 +249,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles?topic=network")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Not Found");
+        expect(body.msg).toBe("Topic Not Found");
       });
   });
   it('status:200, responds with an empty array when "topic" is existing but has no articles associated with it.', () => {
@@ -286,7 +286,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/24/comments")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Article_id: 24 is invalid.");
+        expect(body.msg).toEqual("Article with ID 24 not found.");
       });
   });
   it("status:400, responds with a 400 error when passed an invalid ID.", () => {
@@ -328,12 +328,28 @@ describe("POST /api/articles/:article_id/comments", () => {
         );
       });
   });
+  it("status:404, responds with a 404 error when passed a article id which does not exist in the database.", () => {
+    return request(app)
+      .post("/api/articles/24/comments")
+      .send({ username: "lurker", body: "this is definitely not my comment" })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Article_id not found.");
+      });
+  });
+  it("status:400, responds with a 400 error when passed an invalid ID.", () => {
+    return request(app)
+      .post("/api/articles/not-an-ID/comments")
+      .send({ username: "rogersop", body: "this is my type of article" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Invalid ID");
+      });
+  });
 });
 /*
- 
-  sad path: 
-    - incorrect article ID (wrong format)
-    - invalid article ID (article does not exist)
+  POST comments  sad path: 
+   
     - malformed body
         - additional property
         - wrong property value types

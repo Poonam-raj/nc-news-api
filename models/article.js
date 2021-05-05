@@ -18,7 +18,7 @@ exports.fetchArticle = async (articleID) => {
   if (articleResponse.rowCount === 0) {
     return Promise.reject({
       status: 404,
-      msg: `Article_id: ${articleID} is invalid.`,
+      msg: `Article with ID ${articleID} not found.`,
     });
   }
 

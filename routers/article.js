@@ -8,6 +8,7 @@ const {
   getCommentsByArticleID,
   postCommentByArticleID,
 } = require("../controllers/comment");
+
 const articleRouter = express.Router();
 
 articleRouter

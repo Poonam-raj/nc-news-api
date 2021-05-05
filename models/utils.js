@@ -41,7 +41,7 @@ exports.formFetchArticleQueryStr = async (sort_by, order, topic) => {
     const topicSlugs = await db.query(`SELECT slug FROM topics;`);
     const acceptedTopics = topicSlugs.rows.map((slug) => slug.slug);
     if (!acceptedTopics.includes(topic)) {
-      return Promise.reject({ status: 404, msg: "Not Found" });
+      return Promise.reject({ status: 404, msg: "Topic Not Found" });
     }
 
     queryStr += ` WHERE topic = $1`;
@@ -61,7 +61,7 @@ exports.checkArticleID = async (articleID) => {
   if (isValidArticleID.rowCount === 0) {
     return Promise.reject({
       status: 404,
-      msg: `Article_id: ${articleID} is invalid.`,
+      msg: `Article with ID ${articleID} not found.`,
     });
   }
 };
