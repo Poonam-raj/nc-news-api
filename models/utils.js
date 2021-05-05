@@ -1,13 +1,25 @@
 const db = require("../db/connection");
 
-exports.isMalformedBody = (key, body) => {
-  const bodyKeys = Object.keys(body);
-  if (typeof key !== "number" || bodyKeys.length > 1) {
-    return Promise.reject({
-      status: 400,
-      msg: `Bad request: malformed body`,
-    });
+exports.isMalformedBody = (expectedKeysObj, body) => {
+  if (!expectedKeysObj || !body) {
+    return false;
   }
+  const bodyKeys = Object.keys(body);
+  const expectedKeys = Object.keys(expectedKeysObj);
+  const keysArrLength = expectedKeys.length;
+  let count = 0;
+
+  expectedKeys.forEach((key) => {
+    bodyKeys.forEach((bodyKey) => {
+      if (key === bodyKey && typeof body[key] === expectedKeysObj[key]) {
+        count++;
+      }
+    });
+  });
+
+  if (bodyKeys.length !== keysArrLength || count !== keysArrLength) {
+    return true;
+  } else return false;
 };
 
 exports.checkQuery = async (sort_by, order) => {

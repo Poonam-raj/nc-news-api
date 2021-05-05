@@ -4,6 +4,7 @@ const {
   formatCommentArticleID,
   createLookup,
 } = require("../db/utils/data-manipulation");
+const { isMalformedBody } = require("../models/utils");
 
 describe("formatTimeStamp", () => {
   it("returns a date object.", () => {
@@ -192,5 +193,40 @@ describe("formatCommentArticleID", () => {
         belongs_to: expect.any(String),
       })
     );
+  });
+});
+
+describe("isMalformedBody", () => {
+  it("returns false when passed nothing", () => {
+    expect(isMalformedBody()).toBe(false);
+  });
+  it("returns true when passed a body which does not contain the right number of keys when passed an object of expected keys with expected datatype and a body.", () => {
+    expect(
+      isMalformedBody({ a: "number", b: "number", c: "number" }, { a: 1, b: 2 })
+    ).toBe(true);
+  });
+  it("returns true when passed a body that does not contain the expected keys when passed an object of expected keys with expected datatype and a body", () => {
+    expect(
+      isMalformedBody(
+        { a: "number", b: "string", c: "number" },
+        { a: 1, b: "dog", d: 4 }
+      )
+    ).toBe(true);
+  });
+  it("returns false when passed an object of expected keys with expected datatype which are solely present in the body.", () => {
+    expect(
+      isMalformedBody(
+        { a: "number", b: "number", c: "number" },
+        { a: 1, b: 2, c: 3 }
+      )
+    ).toBe(false);
+  });
+  it("returns true when passed a body with incorrect type of information", () => {
+    expect(
+      isMalformedBody(
+        { a: "number", b: "number", c: "number" },
+        { a: 1, b: 2, c: false }
+      )
+    ).toBe(true);
   });
 });
