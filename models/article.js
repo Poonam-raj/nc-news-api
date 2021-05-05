@@ -27,7 +27,15 @@ exports.fetchArticle = async (articleID) => {
 
 exports.updateArticle = async (articleID, body) => {
   const { inc_votes } = body;
-  await isMalformedBody(inc_votes, body);
+  const expectedKeys = { inc_votes: "number" };
+  const checkBody = await isMalformedBody(expectedKeys, body);
+
+  if (checkBody) {
+    return Promise.reject({
+      status: 400,
+      msg: `Bad request: malformed body`,
+    });
+  }
   await db.query(
     `UPDATE articles SET 
   votes = votes + $1 WHERE article_id = $2;`,
