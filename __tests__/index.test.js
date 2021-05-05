@@ -346,16 +346,48 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.msg).toEqual("Invalid ID");
       });
   });
+
+  it("status:400, responds with a Bad Request error message when passed an empty body.", () => {
+    return request(app)
+      .post("/api/articles/8/comments")
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request: malformed body");
+      });
+  });
+
+  it("status:400, responds with a Bad Request error message when passed a value with incorrect type.", () => {
+    return request(app)
+      .post("/api/articles/8/comments")
+      .send({ username: "lurker", body: 32 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request: malformed body");
+      });
+  });
+  it("status:400, responds with a Bad Request error message when passed an incorrect key.", () => {
+    return request(app)
+      .post("/api/articles/8/comments")
+      .send({ dog: "lurker", body: "this is my comment" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request: malformed body");
+      });
+  });
+
+  it("status:400, responds with Bad Request error when passed some other property on request body.", () => {
+    return request(app)
+      .post("/api/articles/8/comments")
+      .send({ username: "lurker", body: "this is my comment", inc_votes: 4 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request: malformed body");
+      });
+  });
 });
 /*
-  POST comments  sad path: 
-   
-    - malformed body
-        - additional property
-        - wrong property value types
-        - wrong properties
-        - missing data
-    
+
 GET /api
   happy path: responds with JSON object of all available API endpoints
   
