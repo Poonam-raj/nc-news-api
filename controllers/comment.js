@@ -1,5 +1,4 @@
 const { fetchCommentsByID, insertComment } = require("../models/comment");
-const { isMalformedBody } = require("../models/utils");
 
 exports.getCommentsByArticleID = (req, res, next) => {
   fetchCommentsByID(req.params.article_id)
