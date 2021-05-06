@@ -261,6 +261,7 @@ describe("GET /api/articles", () => {
       });
   });
 });
+//GET articles should include body?
 
 describe("GET /api/articles/:article_id/comments", () => {
   it("status:200, responds with an array of comments for a given article_id", () => {
@@ -393,7 +394,7 @@ describe("GET /api", () => {
       .get("/api")
       .expect(200)
       .then(({ body }) => {
-        body.endpoints.forEach((endpoint) => {
+        expect(body.endpoints).toEqual(
           expect.objectContaining({
             "GET /api": expect.any(Object),
             "GET /api/topics": expect.any(Object),
@@ -402,13 +403,8 @@ describe("GET /api", () => {
             "GET /api/articles": expect.any(Object),
             "GET /api/articles/:article_id/comments": expect.any(Object),
             "POST /api/articles/:article_id/comments": expect.any(Object),
-          });
-          endpoint.forEach(() => {
-            expect.objectContaining({
-              description: expect.any(String),
-            });
-          });
-        });
+          })
+        );
       });
   });
 });
