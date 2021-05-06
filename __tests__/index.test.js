@@ -269,7 +269,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get(path)
       .expect(200)
       .then(({ body }) => {
-        body.comments.forEach((comment) => {
+        body.comments.forEach(() => {
           expect.objectContaining({
             comment_id: expect.any(Number),
             votes: expect.any(Number),
@@ -386,9 +386,29 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
-/*
 
-GET /api
-  happy path: responds with JSON object of all available API endpoints
-  
-  */
+describe("GET /api", () => {
+  it("status:200, responds with a JSON object containing all available API endpoints.", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        body.endpoints.forEach((endpoint) => {
+          expect.objectContaining({
+            "GET /api": expect.any(Object),
+            "GET /api/topics": expect.any(Object),
+            "GET /api/articles/:article_id": expect.any(Object),
+            "PATCH /api/articles/:article_id": expect.any(Object),
+            "GET /api/articles": expect.any(Object),
+            "GET /api/articles/:article_id/comments": expect.any(Object),
+            "POST /api/articles/:article_id/comments": expect.any(Object),
+          });
+          endpoint.forEach(() => {
+            expect.objectContaining({
+              description: expect.any(String),
+            });
+          });
+        });
+      });
+  });
+});
