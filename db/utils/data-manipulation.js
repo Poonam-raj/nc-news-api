@@ -13,7 +13,6 @@ exports.formatCommentAuthor = (commentData) => {
 };
 
 exports.createLookup = (articles) => {
-  //this createLookup function could be changed to make it reusable;
   const finalLookup = {};
   articles.forEach((article) => {
     const articleKeys = Object.keys(article);
