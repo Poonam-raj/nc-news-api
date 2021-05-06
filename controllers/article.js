@@ -1,4 +1,3 @@
-const seed = require("../db/seeds/seed");
 const {
   fetchArticle,
   updateArticle,

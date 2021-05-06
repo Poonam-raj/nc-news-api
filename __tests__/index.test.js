@@ -261,7 +261,6 @@ describe("GET /api/articles", () => {
       });
   });
 });
-//GET articles should include body?
 
 describe("GET /api/articles/:article_id/comments", () => {
   it("status:200, responds with an array of comments for a given article_id", () => {
