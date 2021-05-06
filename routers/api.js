@@ -4,8 +4,8 @@ const articleRouter = require("./article");
 
 const apiRouter = express.Router();
 
-apiRouter.get("/", getEndpoints);
 apiRouter.get("/topics", getTopics);
 apiRouter.use("/articles", articleRouter);
+apiRouter.get("/", getEndpoints);
 
 module.exports = apiRouter;
