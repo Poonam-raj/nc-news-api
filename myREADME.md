@@ -19,7 +19,9 @@ You can get all the articles, all topics, an article by ID and comments by artic
 
 This API is hosted on Heroku and can be found here: [https://poonam-nc-news.herokuapp.com/](https://poonam-nc-news.herokuapp.com/)
 
-## 1. Clone Northcoders News
+## Set Up the Repo
+
+### 1. Clone the Repo
 
 In terminal:
 
@@ -27,17 +29,7 @@ In terminal:
 git clone https://github.com/Poonam-raj/be-nc-news.git
 ```
 
-## 2. Install Dependencies
-
-### Initialise package files
-
-In terminal:
-
-```bash
-npm init -y
-```
-
-### Install Node Modules
+### 2. Install Dependencies
 
 In terminal:
 
@@ -45,11 +37,11 @@ In terminal:
 npm install
 ```
 
-## 3. Add .env files
+### 3. Add .env files
 
 Make two files in the root directory of this repo.
 
-### .env.test
+#### .env.test
 
 Make the first file called `.env.test`. It should only contain the following:
 
@@ -57,7 +49,7 @@ Make the first file called `.env.test`. It should only contain the following:
 PGDATABASE=nc_news_test
 ```
 
-### .env.development
+#### .env.development
 
 Make the second file called `.env.development`. It should only contain the following:
 
@@ -65,7 +57,7 @@ Make the second file called `.env.development`. It should only contain the follo
 PGDATABASE=nc_news
 ```
 
-## 4. Run Test
+### 4. Run Test
 
 Run the test file:
 
@@ -73,10 +65,16 @@ Run the test file:
 npm test
 ```
 
-Followed by:
+And to run all tests follow this command with:
 
 ```bash
 a
 ```
 
 to run all the tests in the file.
+
+### 5. Check Node and Postgres versions
+
+The minimum verion of Node required is: <b>7.4.0</b>
+
+The minimum version of Postgres required is: <b> 7.4.0</b>
