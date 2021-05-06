@@ -8,10 +8,10 @@ exports.createTables = async () => {
     `CREATE TABLE users (username VARCHAR PRIMARY KEY, avatar_url VARCHAR, name VARCHAR);`
   );
   await db.query(
-    `CREATE TABLE articles (article_id SERIAL PRIMARY KEY, title VARCHAR, body VARCHAR, votes INT DEFAULT 0, topic VARCHAR REFERENCES topic(slug), author VARCHAR REFERENCES "user"(username), created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);`
+    `CREATE TABLE articles (article_id SERIAL PRIMARY KEY, title VARCHAR, body VARCHAR, votes INT DEFAULT 0, topic VARCHAR REFERENCES topics(slug), author VARCHAR REFERENCES users(username), created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);`
   );
   await db.query(
-    `CREATE TABLE comments (comment_id SERIAL PRIMARY KEY, author VARCHAR NOT NULL REFERENCES "user"(username), article_id INT NOT NULL REFERENCES article(article_id), votes INT DEFAULT 0, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, body VARCHAR);`
+    `CREATE TABLE comments (comment_id SERIAL PRIMARY KEY, author VARCHAR NOT NULL REFERENCES users(username), article_id INT NOT NULL REFERENCES articles(article_id), votes INT DEFAULT 0, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, body VARCHAR);`
   );
 };
 

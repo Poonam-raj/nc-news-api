@@ -26,7 +26,6 @@ const seed = async ({ articleData, topicData, userData, commentData }) => {
     ])
   );
   await db.query(insertUserQueryString);
-
   const insertArticleQueryString = format(
     `INSERT INTO articles (title, body, votes, topic, author, created_at) VALUES %L RETURNING *;`,
     articleData.map(({ title, body, votes, topic, author, created_at }) => [
