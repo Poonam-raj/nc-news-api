@@ -75,6 +75,6 @@ to run all the tests in the file.
 
 ### 5. Check Node and Postgres versions
 
-The minimum verion of Node required is: <b>7.4.0</b>
+The minimum version of Node required: <b>7.4.0</b>
 
-The minimum version of Postgres required is: <b> 7.4.0</b>
+The minimum version of Postgres required: <b> 7.4.0</b>
