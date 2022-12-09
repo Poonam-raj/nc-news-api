@@ -1,10 +1,10 @@
-const db = require("../db/connection");
-const { checkArticleID, isMalformedBody } = require("./utils");
+const db = require('../db/connection');
+const { checkArticleID, isMalformedBody } = require('./utils');
 
 exports.fetchCommentsByID = async (articleID) => {
   const commentsResponse = await db.query(
-    `SELECT * FROM comments WHERE article_id = $1`,
-    [articleID]
+    `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;`,
+    [articleID],
   );
   if (commentsResponse.rowCount === 0) {
     await checkArticleID(articleID);
@@ -14,7 +14,7 @@ exports.fetchCommentsByID = async (articleID) => {
 
 exports.insertComment = async (articleID, reqBody) => {
   const { username, body } = reqBody;
-  const expectedKeys = { username: "string", body: "string" };
+  const expectedKeys = { username: 'string', body: 'string' };
   const checkBody = await isMalformedBody(expectedKeys, reqBody);
   if (checkBody) {
     return Promise.reject({
@@ -25,7 +25,7 @@ exports.insertComment = async (articleID, reqBody) => {
   const insertedComment = await db.query(
     `
   INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING *;`,
-    [username, body, articleID]
+    [username, body, articleID],
   );
   return insertedComment.rows[0];
 };
