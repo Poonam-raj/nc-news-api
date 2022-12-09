@@ -443,10 +443,24 @@ describe('users', () => {
 });
 describe('comments', () => {
   describe('DELETE /api/comments/:comment_id', () => {
-    it('deletes specified comment', () => {
+    it('204: deletes specified comment', () => {
       return request(app).delete('/api/comments/2').expect(204);
     });
-    // missing ID
-    // invalid ID
+    it('404: error when passed a valid ID that is missing in the db', () => {
+      return request(app)
+        .delete('/api/comments/10000')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Comment with id 10000 does not exist');
+        });
+    });
+    it('400: error when passed invalid id', () => {
+      return request(app)
+        .delete('/api/comments/badId')
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Invalid ID');
+        });
+    });
   });
 });
