@@ -29,3 +29,7 @@ exports.insertComment = async (articleID, reqBody) => {
   );
   return insertedComment.rows[0];
 };
+
+exports.dropCommentById = (commentId) => {
+  return db.query('DELETE FROM comments WHERE comment_id = $1;', [commentId]);
+};
