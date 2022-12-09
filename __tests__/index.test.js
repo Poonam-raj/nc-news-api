@@ -43,7 +43,7 @@ describe('GET /api/topics', () => {
 });
 
 describe('GET /api/articles/:article_id', () => {
-  it('status:200, responds with a specific article object based on article_id in the route.', () => {
+  it('status:200, responds with a specific article.', () => {
     return request(app)
       .get('/api/articles/1')
       .expect(200)
@@ -60,7 +60,7 @@ describe('GET /api/articles/:article_id', () => {
         });
       });
   });
-  it('status:404, responds with a 404 error when passed a article id which does not exist in the database.', () => {
+  it('status:404, error when passed a non-existent article_id', () => {
     return request(app)
       .get('/api/articles/24')
       .expect(404)
@@ -68,7 +68,7 @@ describe('GET /api/articles/:article_id', () => {
         expect(body.msg).toEqual('Article with ID 24 not found.');
       });
   });
-  it('status:400, responds with a 400 error when passed an invalid ID.', () => {
+  it('status:400, error when passed an invalid ID.', () => {
     return request(app)
       .get('/api/articles/not-an-ID')
       .expect(400)
@@ -99,17 +99,8 @@ describe('PATCH /api/articles/:article_id', () => {
         );
       });
   });
-  it('status:400, responds with a Bad Request error message when passed a malformed body.', () => {
-    return request(app)
-      .patch('/api/articles/1')
-      .send({})
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toEqual('Bad request: malformed body');
-      });
-  });
 
-  it('status:400, responds with a Bad Request error message when passed a value with incorrect type.', () => {
+  it('status:400, error when passed a value with incorrect type.', () => {
     return request(app)
       .patch('/api/articles/1')
       .send({ inc_votes: 'dog' })
@@ -118,7 +109,7 @@ describe('PATCH /api/articles/:article_id', () => {
         expect(body.msg).toEqual('Bad request: malformed body');
       });
   });
-  it('status:400, responds with a Bad Request error message when passed an incorrect key.', () => {
+  it('status:400, error when missing inc_votes key.', () => {
     return request(app)
       .patch('/api/articles/1')
       .send({ dog: -25 })
@@ -128,7 +119,7 @@ describe('PATCH /api/articles/:article_id', () => {
       });
   });
 
-  it('status:400, responds with Bad Request error when passed some other property on request body.', () => {
+  xit('status:400, error when passed some other property on request body.', () => {
     return request(app)
       .patch('/api/articles/1')
       .send({ inc_votes: 1, name: 'Mitch' })
@@ -138,7 +129,7 @@ describe('PATCH /api/articles/:article_id', () => {
       });
   });
 
-  it('status:404, responds with a 404 error when passed an article id which does not exist in the database.', () => {
+  it('status:404, error when passed an article id which does not exist in the database.', () => {
     return request(app)
       .patch('/api/articles/35')
       .send({ inc_votes: -25 })
@@ -147,7 +138,7 @@ describe('PATCH /api/articles/:article_id', () => {
         expect(body.msg).toEqual('Article with ID 35 not found.');
       });
   });
-  it('status:400, responds with a 400 error when passed an invalid ID.', () => {
+  it('status:400, error when passed an invalid ID.', () => {
     return request(app)
       .patch('/api/articles/is-dog')
       .send({ inc_votes: -25 })
@@ -281,7 +272,7 @@ describe('GET /api/articles/:article_id/comments', () => {
       });
   });
 
-  it('status:404, responds with a 404 error when passed a article id which does not exist in the database.', () => {
+  it('status:404, error when passed a non-existant article id.', () => {
     return request(app)
       .get('/api/articles/24/comments')
       .expect(404)
@@ -289,7 +280,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         expect(body.msg).toEqual('Article with ID 24 not found.');
       });
   });
-  it('status:400, responds with a 400 error when passed an invalid ID.', () => {
+  it('status:400, error when passed an invalid ID.', () => {
     return request(app)
       .get('/api/articles/not-an-ID/comments')
       .expect(400)
@@ -309,7 +300,7 @@ describe('GET /api/articles/:article_id/comments', () => {
 });
 
 describe('POST /api/articles/:article_id/comments', () => {
-  it('status:201, posts a given comment into the comment database and responds with the posted comment.', () => {
+  it('status:201, posts a given comment and responds with the posted comment.', () => {
     const path = '/api/articles/8/comments';
     return request(app)
       .post(path)
@@ -328,7 +319,7 @@ describe('POST /api/articles/:article_id/comments', () => {
         );
       });
   });
-  it('status:404, responds with a 404 error when passed a article id which does not exist in the database.', () => {
+  it('status:404, error when passed a article id which does not exist in the database.', () => {
     return request(app)
       .post('/api/articles/24/comments')
       .send({ username: 'lurker', body: 'this is definitely not my comment' })
@@ -337,7 +328,7 @@ describe('POST /api/articles/:article_id/comments', () => {
         expect(body.msg).toEqual('Article_id not found.');
       });
   });
-  it('status:400, responds with a 400 error when passed an invalid ID.', () => {
+  it('status:400, error when passed an invalid ID.', () => {
     return request(app)
       .post('/api/articles/not-an-ID/comments')
       .send({ username: 'rogersop', body: 'this is my type of article' })
@@ -347,7 +338,7 @@ describe('POST /api/articles/:article_id/comments', () => {
       });
   });
 
-  it('status:400, responds with a Bad Request error message when passed an empty body.', () => {
+  it('status:400, error when passed an empty body.', () => {
     return request(app)
       .post('/api/articles/8/comments')
       .send({})
@@ -357,7 +348,7 @@ describe('POST /api/articles/:article_id/comments', () => {
       });
   });
 
-  it('status:400, responds with a Bad Request error message when passed a value with incorrect type.', () => {
+  it('status:400, error when passed a value with incorrect type.', () => {
     return request(app)
       .post('/api/articles/8/comments')
       .send({ username: 'lurker', body: 32 })
@@ -366,7 +357,7 @@ describe('POST /api/articles/:article_id/comments', () => {
         expect(body.msg).toEqual('Bad request: malformed body');
       });
   });
-  it('status:400, responds with a Bad Request error message when passed an incorrect key.', () => {
+  it('status:400, error when passed an incorrect key.', () => {
     return request(app)
       .post('/api/articles/8/comments')
       .send({ dog: 'lurker', body: 'this is my comment' })
@@ -376,7 +367,7 @@ describe('POST /api/articles/:article_id/comments', () => {
       });
   });
 
-  it('status:400, responds with Bad Request error when passed some other property on request body.', () => {
+  xit('status:400, error when passed some other property on request body.', () => {
     return request(app)
       .post('/api/articles/8/comments')
       .send({ username: 'lurker', body: 'this is my comment', inc_votes: 4 })
