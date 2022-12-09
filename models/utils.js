@@ -1,4 +1,4 @@
-const db = require("../db/connection");
+const db = require('../db/connection');
 
 exports.isMalformedBody = (expectedKeysObj, body) => {
   if (!expectedKeysObj || !body) {
@@ -17,23 +17,24 @@ exports.isMalformedBody = (expectedKeysObj, body) => {
     });
   });
 
-  if (bodyKeys.length !== keysArrLength || count !== keysArrLength) {
+  if (keysArrLength !== count) {
     return true;
-  } else return false;
+  }
+  return false;
 };
 
 exports.checkQuery = async (sort_by, order) => {
   const acceptedColumns = [
-    "author",
-    "title",
-    "article_id",
-    "topic",
-    "created_at",
-    "votes",
-    "comment_count",
+    'author',
+    'title',
+    'article_id',
+    'topic',
+    'created_at',
+    'votes',
+    'comment_count',
   ];
 
-  const acceptedOrders = ["desc", "asc"];
+  const acceptedOrders = ['desc', 'asc'];
 
   if (!acceptedColumns.includes(sort_by)) {
     return Promise.reject({ status: 400, msg: `Bad Query: ${sort_by}` });
@@ -53,7 +54,7 @@ exports.formFetchArticleQueryStr = async (sort_by, order, topic) => {
     const topicSlugs = await db.query(`SELECT slug FROM topics;`);
     const acceptedTopics = topicSlugs.rows.map((slug) => slug.slug);
     if (!acceptedTopics.includes(topic)) {
-      return Promise.reject({ status: 404, msg: "Topic Not Found" });
+      return Promise.reject({ status: 404, msg: 'Topic Not Found' });
     }
 
     queryStr += ` WHERE topic = $1`;
@@ -68,7 +69,7 @@ exports.formFetchArticleQueryStr = async (sort_by, order, topic) => {
 exports.checkArticleID = async (articleID) => {
   const isValidArticleID = await db.query(
     `SELECT * FROM articles WHERE article_id = $1;`,
-    [articleID]
+    [articleID],
   );
   if (isValidArticleID.rowCount === 0) {
     return Promise.reject({
