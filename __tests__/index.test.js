@@ -119,16 +119,6 @@ describe('PATCH /api/articles/:article_id', () => {
       });
   });
 
-  xit('status:400, error when passed some other property on request body.', () => {
-    return request(app)
-      .patch('/api/articles/1')
-      .send({ inc_votes: 1, name: 'Mitch' })
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toEqual('Bad request: malformed body');
-      });
-  });
-
   it('status:404, error when passed an article id which does not exist in the database.', () => {
     return request(app)
       .patch('/api/articles/35')
@@ -269,6 +259,10 @@ describe('GET /api/articles/:article_id/comments', () => {
             body: expect.any(String),
           });
         });
+
+        expect(body.comments).toBeSortedBy('created_at', {
+          descending: true,
+        });
       });
   });
 
@@ -361,16 +355,6 @@ describe('POST /api/articles/:article_id/comments', () => {
     return request(app)
       .post('/api/articles/8/comments')
       .send({ dog: 'lurker', body: 'this is my comment' })
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toEqual('Bad request: malformed body');
-      });
-  });
-
-  xit('status:400, error when passed some other property on request body.', () => {
-    return request(app)
-      .post('/api/articles/8/comments')
-      .send({ username: 'lurker', body: 'this is my comment', inc_votes: 4 })
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toEqual('Bad request: malformed body');
