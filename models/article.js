@@ -1,9 +1,9 @@
-const db = require("../db/connection");
+const db = require('../db/connection');
 const {
   isMalformedBody,
   checkQuery,
   formFetchArticleQueryStr,
-} = require("./utils");
+} = require('./utils');
 
 exports.fetchArticle = async (articleID) => {
   const articleResponse = await db.query(
@@ -11,7 +11,7 @@ exports.fetchArticle = async (articleID) => {
     LEFT JOIN comments ON comments.article_id = articles.article_id
     WHERE articles.article_id = $1
     GROUP BY articles.article_id;`,
-    [articleID]
+    [articleID],
   );
   const { rows } = articleResponse;
 
@@ -27,7 +27,7 @@ exports.fetchArticle = async (articleID) => {
 
 exports.updateArticle = async (articleID, body) => {
   const { inc_votes } = body;
-  const expectedKeys = { inc_votes: "number" };
+  const expectedKeys = { inc_votes: 'number' };
   const checkBody = await isMalformedBody(expectedKeys, body);
 
   if (checkBody) {
@@ -39,22 +39,22 @@ exports.updateArticle = async (articleID, body) => {
   await db.query(
     `UPDATE articles SET 
   votes = votes + $1 WHERE article_id = $2;`,
-    [inc_votes, articleID]
+    [inc_votes, articleID],
   );
 
   return this.fetchArticle(articleID);
 };
 
 exports.fetchAllArticles = async (
-  sort_by = "created_at",
-  order = "DESC",
-  topic
+  sort_by = 'created_at',
+  order = 'DESC',
+  topic,
 ) => {
   await checkQuery(sort_by, order);
   const { queryStr, queryValues } = await formFetchArticleQueryStr(
     sort_by,
     order,
-    topic
+    topic,
   );
   const articlesResponse = await db.query(queryStr, queryValues);
   return articlesResponse.rows;

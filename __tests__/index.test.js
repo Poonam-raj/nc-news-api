@@ -99,6 +99,20 @@ describe('PATCH /api/articles/:article_id', () => {
         );
       });
   });
+  it('status:200, ignores extra properties.', () => {
+    return request(app)
+      .patch('/api/articles/1')
+      .send({ inc_votes: -25, extraProp: false })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual(
+          expect.objectContaining({
+            article_id: 1,
+            votes: 75,
+          }),
+        );
+      });
+  });
 
   it('status:400, error when passed a value with incorrect type.', () => {
     return request(app)
@@ -307,6 +321,26 @@ describe('POST /api/articles/:article_id/comments', () => {
             article_id: 8,
             votes: expect.any(Number),
             created_at: expect.any(String),
+            author: 'lurker',
+            body: 'this is my comment',
+          }),
+        );
+      });
+  });
+  it('status:201, ignores extra properties.', () => {
+    const path = '/api/articles/8/comments';
+    return request(app)
+      .post(path)
+      .send({
+        username: 'lurker',
+        body: 'this is my comment',
+        thisIsExtra: 1000,
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toEqual(
+          expect.objectContaining({
+            article_id: 8,
             author: 'lurker',
             body: 'this is my comment',
           }),
