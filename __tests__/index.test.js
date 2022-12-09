@@ -1,8 +1,8 @@
-const request = require("supertest");
-const seed = require("../db/seeds/seed");
-const testData = require("../db/data/test-data/index");
-const db = require("../db/connection");
-const app = require("../app");
+const request = require('supertest');
+const seed = require('../db/seeds/seed');
+const testData = require('../db/data/test-data/index');
+const db = require('../db/connection');
+const app = require('../app');
 
 beforeEach(async () => {
   await seed(testData);
@@ -13,20 +13,20 @@ afterAll(() => {
 });
 
 describe("routes that don't exist.", () => {
-  it("status:404, and not found message", () => {
+  it('status:404, and not found message', () => {
     return request(app)
-      .get("/not-a-route-mate")
+      .get('/not-a-route-mate')
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Route Not Found");
+        expect(body.msg).toBe('Route Not Found');
       });
   });
 });
 
-describe("GET /api/topics", () => {
-  it("status:200, should respond with an object containing all topics ", () => {
+describe('GET /api/topics', () => {
+  it('status:200, should respond with an object containing all topics ', () => {
     return request(app)
-      .get("/api/topics")
+      .get('/api/topics')
       .expect(200)
       .then(({ body }) => {
         expect(body.topics).toHaveLength(3);
@@ -35,53 +35,53 @@ describe("GET /api/topics", () => {
             expect.objectContaining({
               description: expect.any(String),
               slug: expect.any(String),
-            })
+            }),
           );
         });
       });
   });
 });
 
-describe("GET /api/articles/:article_id", () => {
-  it("status:200, responds with a specific article object based on article_id in the route.", () => {
+describe('GET /api/articles/:article_id', () => {
+  it('status:200, responds with a specific article object based on article_id in the route.', () => {
     return request(app)
-      .get("/api/articles/1")
+      .get('/api/articles/1')
       .expect(200)
       .then(({ body }) => {
         expect(body.article).toEqual({
           article_id: 1,
-          title: "Living in the shadow of a great man",
-          body: "I find this existence challenging",
+          title: 'Living in the shadow of a great man',
+          body: 'I find this existence challenging',
           votes: 100,
-          topic: "mitch",
-          author: "butter_bridge",
-          created_at: "2020-07-09T20:11:00.000Z",
-          comment_count: "13",
+          topic: 'mitch',
+          author: 'butter_bridge',
+          created_at: '2020-07-09T20:11:00.000Z',
+          comment_count: '13',
         });
       });
   });
-  it("status:404, responds with a 404 error when passed a article id which does not exist in the database.", () => {
+  it('status:404, responds with a 404 error when passed a article id which does not exist in the database.', () => {
     return request(app)
-      .get("/api/articles/24")
+      .get('/api/articles/24')
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Article with ID 24 not found.");
+        expect(body.msg).toEqual('Article with ID 24 not found.');
       });
   });
-  it("status:400, responds with a 400 error when passed an invalid ID.", () => {
+  it('status:400, responds with a 400 error when passed an invalid ID.', () => {
     return request(app)
-      .get("/api/articles/not-an-ID")
+      .get('/api/articles/not-an-ID')
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Invalid ID");
+        expect(body.msg).toEqual('Invalid ID');
       });
   });
 });
 
-describe("PATCH /api/articles/:article_id", () => {
-  it("status:200, patches the article with article_id specified with an updated vote count, returning the updated article.", () => {
+describe('PATCH /api/articles/:article_id', () => {
+  it('status:200, patches the article with article_id specified with an updated vote count, returning the updated article.', () => {
     return request(app)
-      .patch("/api/articles/1")
+      .patch('/api/articles/1')
       .send({ inc_votes: -25 })
       .expect(200)
       .then(({ body }) => {
@@ -95,73 +95,73 @@ describe("PATCH /api/articles/:article_id", () => {
             created_at: expect.any(String),
             votes: 75,
             comment_count: expect.any(String),
-          })
+          }),
         );
       });
   });
-  it("status:400, responds with a Bad Request error message when passed a malformed body.", () => {
+  it('status:400, responds with a Bad Request error message when passed a malformed body.', () => {
     return request(app)
-      .patch("/api/articles/1")
+      .patch('/api/articles/1')
       .send({})
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Bad request: malformed body");
+        expect(body.msg).toEqual('Bad request: malformed body');
       });
   });
 
-  it("status:400, responds with a Bad Request error message when passed a value with incorrect type.", () => {
+  it('status:400, responds with a Bad Request error message when passed a value with incorrect type.', () => {
     return request(app)
-      .patch("/api/articles/1")
-      .send({ inc_votes: "dog" })
+      .patch('/api/articles/1')
+      .send({ inc_votes: 'dog' })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Bad request: malformed body");
+        expect(body.msg).toEqual('Bad request: malformed body');
       });
   });
-  it("status:400, responds with a Bad Request error message when passed an incorrect key.", () => {
+  it('status:400, responds with a Bad Request error message when passed an incorrect key.', () => {
     return request(app)
-      .patch("/api/articles/1")
+      .patch('/api/articles/1')
       .send({ dog: -25 })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Bad request: malformed body");
+        expect(body.msg).toEqual('Bad request: malformed body');
       });
   });
 
-  it("status:400, responds with Bad Request error when passed some other property on request body.", () => {
+  it('status:400, responds with Bad Request error when passed some other property on request body.', () => {
     return request(app)
-      .patch("/api/articles/1")
-      .send({ inc_votes: 1, name: "Mitch" })
+      .patch('/api/articles/1')
+      .send({ inc_votes: 1, name: 'Mitch' })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Bad request: malformed body");
+        expect(body.msg).toEqual('Bad request: malformed body');
       });
   });
 
-  it("status:404, responds with a 404 error when passed an article id which does not exist in the database.", () => {
+  it('status:404, responds with a 404 error when passed an article id which does not exist in the database.', () => {
     return request(app)
-      .patch("/api/articles/35")
+      .patch('/api/articles/35')
       .send({ inc_votes: -25 })
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Article with ID 35 not found.");
+        expect(body.msg).toEqual('Article with ID 35 not found.');
       });
   });
-  it("status:400, responds with a 400 error when passed an invalid ID.", () => {
+  it('status:400, responds with a 400 error when passed an invalid ID.', () => {
     return request(app)
-      .patch("/api/articles/is-dog")
+      .patch('/api/articles/is-dog')
       .send({ inc_votes: -25 })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Invalid ID");
+        expect(body.msg).toEqual('Invalid ID');
       });
   });
 });
 
-describe("GET /api/articles", () => {
-  it("status:200, responds with an array of article objects, default sort order is by date descending.", () => {
+describe('GET /api/articles', () => {
+  it('status:200, responds with all articles, default sorting.', () => {
     return request(app)
-      .get("/api/articles")
+      .get('/api/articles')
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toHaveLength(12);
@@ -175,86 +175,86 @@ describe("GET /api/articles", () => {
               created_at: expect.any(String),
               votes: expect.any(Number),
               comment_count: expect.any(String),
-            })
+            }),
           );
           expect(article).not.toEqual(
             expect.objectContaining({
               body: expect.any(String),
-            })
+            }),
           );
         });
-        expect(body.articles).toBeSortedBy("created_at", {
+        expect(body.articles).toBeSortedBy('created_at', {
           descending: true,
         });
       });
   });
-  it("status:200, should accept a query including a sort_by parameter to sort by any valid column (default order Desc).", () => {
+  it('status:200, accepts a query of sort_by to sort by any valid column.', () => {
     return request(app)
-      .get("/api/articles?sort_by=title")
+      .get('/api/articles?sort_by=title')
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toHaveLength(12);
-        expect(body.articles).toBeSortedBy("title", {
+        expect(body.articles).toBeSortedBy('title', {
           descending: true,
         });
       });
   });
-  it("status:200, should accept a query including a order parameter to alter order of sort to ascending.", () => {
+  it('status:200, accepts a query of order.', () => {
     return request(app)
-      .get("/api/articles?order=asc")
+      .get('/api/articles?order=asc')
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toHaveLength(12);
-        expect(body.articles).toBeSortedBy("created_at");
+        expect(body.articles).toBeSortedBy('created_at');
       });
   });
-  it("status:200, should accept a query including a topic parameter to filter results by topic slug.", () => {
+  it('status:200, accepts a query of topic to filter by topic.', () => {
     return request(app)
-      .get("/api/articles?topic=cats")
+      .get('/api/articles?topic=cats')
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toHaveLength(1);
-        expect(body.articles).toBeSortedBy("created_at", {
+        expect(body.articles).toBeSortedBy('created_at', {
           descending: true,
         });
       });
   });
-  it("status:200, should accept a query including a topic, sort_by and order parameter to filter results by topic slug in a specific sort order.", () => {
+  it('status:200, accepts a query of topic, sort_by and order together.', () => {
     return request(app)
-      .get("/api/articles?topic=mitch&sort_by=author&order=asc")
+      .get('/api/articles?topic=mitch&sort_by=author&order=asc')
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toHaveLength(11);
-        expect(body.articles).toBeSortedBy("author");
+        expect(body.articles).toBeSortedBy('author');
       });
   });
-  it("status:400, responds with 'Bad Query: {sort_by}' when 'sort_by' column does not exist.", () => {
+  it("status:400, error when 'sort_by' column does not exist.", () => {
     return request(app)
-      .get("/api/articles?sort_by=dog")
+      .get('/api/articles?sort_by=dog')
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad Query: dog");
+        expect(body.msg).toBe('Bad Query: dog');
       });
   });
-  it('status:400, responds with "Bad Query" when "order" is not defined as "asc" or "desc"', () => {
+  it('status:400, error when "order" is not defined as "asc" or "desc"', () => {
     return request(app)
-      .get("/api/articles?order=cat")
+      .get('/api/articles?order=cat')
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad Query: cat");
+        expect(body.msg).toBe('Bad Query: cat');
       });
   });
-  it('status:404, responds with "Not Found" when "topic" is not in database.', () => {
+  it('status:404, error when "topic" is not in database.', () => {
     return request(app)
-      .get("/api/articles?topic=network")
+      .get('/api/articles?topic=network')
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Topic Not Found");
+        expect(body.msg).toBe('Topic Not Found');
       });
   });
-  it('status:200, responds with an empty array when "topic" is existing but has no articles associated with it.', () => {
+  it('status:200, responds with empty array when "topic" is existing but has no articles associated with it.', () => {
     return request(app)
-      .get("/api/articles?topic=paper")
+      .get('/api/articles?topic=paper')
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toEqual([]);
@@ -262,9 +262,9 @@ describe("GET /api/articles", () => {
   });
 });
 
-describe("GET /api/articles/:article_id/comments", () => {
-  it("status:200, responds with an array of comments for a given article_id", () => {
-    const path = "/api/articles/1/comments";
+describe('GET /api/articles/:article_id/comments', () => {
+  it('status:200, responds with an array of comments for a given article_id', () => {
+    const path = '/api/articles/1/comments';
     return request(app)
       .get(path)
       .expect(200)
@@ -281,24 +281,24 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 
-  it("status:404, responds with a 404 error when passed a article id which does not exist in the database.", () => {
+  it('status:404, responds with a 404 error when passed a article id which does not exist in the database.', () => {
     return request(app)
-      .get("/api/articles/24/comments")
+      .get('/api/articles/24/comments')
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Article with ID 24 not found.");
+        expect(body.msg).toEqual('Article with ID 24 not found.');
       });
   });
-  it("status:400, responds with a 400 error when passed an invalid ID.", () => {
+  it('status:400, responds with a 400 error when passed an invalid ID.', () => {
     return request(app)
-      .get("/api/articles/not-an-ID/comments")
+      .get('/api/articles/not-an-ID/comments')
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Invalid ID");
+        expect(body.msg).toEqual('Invalid ID');
       });
   });
-  it("status:200, responds with empty array when passed a valid article_id with no comments associated with it.", () => {
-    const path = "/api/articles/4/comments";
+  it('status:200, responds with empty array when passed a valid article_id with no comments associated with it.', () => {
+    const path = '/api/articles/4/comments';
     return request(app)
       .get(path)
       .expect(200)
@@ -308,12 +308,12 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
-describe("POST /api/articles/:article_id/comments", () => {
-  it("status:201, posts a given comment into the comment database and responds with the posted comment.", () => {
-    const path = "/api/articles/8/comments";
+describe('POST /api/articles/:article_id/comments', () => {
+  it('status:201, posts a given comment into the comment database and responds with the posted comment.', () => {
+    const path = '/api/articles/8/comments';
     return request(app)
       .post(path)
-      .send({ username: "lurker", body: "this is my comment" })
+      .send({ username: 'lurker', body: 'this is my comment' })
       .expect(201)
       .then(({ body }) => {
         expect(body.comment).toEqual(
@@ -322,87 +322,87 @@ describe("POST /api/articles/:article_id/comments", () => {
             article_id: 8,
             votes: expect.any(Number),
             created_at: expect.any(String),
-            author: "lurker",
-            body: "this is my comment",
-          })
+            author: 'lurker',
+            body: 'this is my comment',
+          }),
         );
       });
   });
-  it("status:404, responds with a 404 error when passed a article id which does not exist in the database.", () => {
+  it('status:404, responds with a 404 error when passed a article id which does not exist in the database.', () => {
     return request(app)
-      .post("/api/articles/24/comments")
-      .send({ username: "lurker", body: "this is definitely not my comment" })
+      .post('/api/articles/24/comments')
+      .send({ username: 'lurker', body: 'this is definitely not my comment' })
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Article_id not found.");
+        expect(body.msg).toEqual('Article_id not found.');
       });
   });
-  it("status:400, responds with a 400 error when passed an invalid ID.", () => {
+  it('status:400, responds with a 400 error when passed an invalid ID.', () => {
     return request(app)
-      .post("/api/articles/not-an-ID/comments")
-      .send({ username: "rogersop", body: "this is my type of article" })
+      .post('/api/articles/not-an-ID/comments')
+      .send({ username: 'rogersop', body: 'this is my type of article' })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Invalid ID");
+        expect(body.msg).toEqual('Invalid ID');
       });
   });
 
-  it("status:400, responds with a Bad Request error message when passed an empty body.", () => {
+  it('status:400, responds with a Bad Request error message when passed an empty body.', () => {
     return request(app)
-      .post("/api/articles/8/comments")
+      .post('/api/articles/8/comments')
       .send({})
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Bad request: malformed body");
+        expect(body.msg).toEqual('Bad request: malformed body');
       });
   });
 
-  it("status:400, responds with a Bad Request error message when passed a value with incorrect type.", () => {
+  it('status:400, responds with a Bad Request error message when passed a value with incorrect type.', () => {
     return request(app)
-      .post("/api/articles/8/comments")
-      .send({ username: "lurker", body: 32 })
+      .post('/api/articles/8/comments')
+      .send({ username: 'lurker', body: 32 })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Bad request: malformed body");
+        expect(body.msg).toEqual('Bad request: malformed body');
       });
   });
-  it("status:400, responds with a Bad Request error message when passed an incorrect key.", () => {
+  it('status:400, responds with a Bad Request error message when passed an incorrect key.', () => {
     return request(app)
-      .post("/api/articles/8/comments")
-      .send({ dog: "lurker", body: "this is my comment" })
+      .post('/api/articles/8/comments')
+      .send({ dog: 'lurker', body: 'this is my comment' })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Bad request: malformed body");
+        expect(body.msg).toEqual('Bad request: malformed body');
       });
   });
 
-  it("status:400, responds with Bad Request error when passed some other property on request body.", () => {
+  it('status:400, responds with Bad Request error when passed some other property on request body.', () => {
     return request(app)
-      .post("/api/articles/8/comments")
-      .send({ username: "lurker", body: "this is my comment", inc_votes: 4 })
+      .post('/api/articles/8/comments')
+      .send({ username: 'lurker', body: 'this is my comment', inc_votes: 4 })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Bad request: malformed body");
+        expect(body.msg).toEqual('Bad request: malformed body');
       });
   });
 });
 
-describe("GET /api", () => {
-  it("status:200, responds with a JSON object containing all available API endpoints.", () => {
+describe('GET /api', () => {
+  it('status:200, responds with a JSON object containing all available API endpoints.', () => {
     return request(app)
-      .get("/api")
+      .get('/api')
       .expect(200)
       .then(({ body }) => {
         expect(body.endpoints).toEqual(
           expect.objectContaining({
-            "GET /api": expect.any(Object),
-            "GET /api/topics": expect.any(Object),
-            "GET /api/articles/:article_id": expect.any(Object),
-            "PATCH /api/articles/:article_id": expect.any(Object),
-            "GET /api/articles": expect.any(Object),
-            "GET /api/articles/:article_id/comments": expect.any(Object),
-            "POST /api/articles/:article_id/comments": expect.any(Object),
-          })
+            'GET /api': expect.any(Object),
+            'GET /api/topics': expect.any(Object),
+            'GET /api/articles/:article_id': expect.any(Object),
+            'PATCH /api/articles/:article_id': expect.any(Object),
+            'GET /api/articles': expect.any(Object),
+            'GET /api/articles/:article_id/comments': expect.any(Object),
+            'POST /api/articles/:article_id/comments': expect.any(Object),
+          }),
         );
       });
   });
