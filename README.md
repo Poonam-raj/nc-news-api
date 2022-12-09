@@ -86,3 +86,31 @@ a
 ```
 
 to run all the tests in the file.
+
+## Running the api locally
+
+If you want to run this express app locally on your computer you will need to seed the dev database and start the app
+
+### Seed local database
+
+If you want to seed the local dev database run the command:
+
+```bash
+npm run seed
+```
+
+### Start the app
+
+The following command will start the express app locally:
+
+```bash
+npm run start
+```
+
+## Re-seeding the production database
+
+If the deployed app needs to be re-seeded (if the data is being muddied or any other reason - PLEASE TAKE CARE RE_SEEDING ONLY IF NEED BE) run:
+
+```bash
+npm run seed:prod
+```
