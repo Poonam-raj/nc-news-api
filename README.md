@@ -19,6 +19,12 @@ You can get all the articles, all topics, an article by ID and comments by artic
 
 This API is hosted on Heroku and can be found here: [https://poonam-nc-news.herokuapp.com/](https://poonam-nc-news.herokuapp.com/)
 
+## Min Node and Postgres versions
+
+The minimum version of Node required: <b>7.4.0</b>
+
+The minimum version of Postgres required: <b> 7.4.0</b>
+
 ## Set Up the Repo
 
 ### 1. Clone the Repo
@@ -57,7 +63,15 @@ Make the second file called `.env.development`. It should only contain the follo
 PGDATABASE=nc_news
 ```
 
-### 4. Run Test
+### 4. Set Up Databases
+
+Run the following script to create our databases:
+
+```bash
+npm run setup-dbs
+```
+
+### 5. Run Test
 
 Run the test file:
 
@@ -72,9 +86,3 @@ a
 ```
 
 to run all the tests in the file.
-
-### 5. Check Node and Postgres versions
-
-The minimum version of Node required: <b>7.4.0</b>
-
-The minimum version of Postgres required: <b> 7.4.0</b>
