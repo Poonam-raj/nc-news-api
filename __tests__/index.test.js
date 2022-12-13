@@ -454,6 +454,14 @@ describe('users', () => {
           });
         });
     });
+    it('404: error when passed a valid but not found username', () => {
+      return request(app)
+        .get('/api/users/not_a_user')
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toEqual('invalid username');
+        });
+    });
   });
 });
 describe('comments', () => {
