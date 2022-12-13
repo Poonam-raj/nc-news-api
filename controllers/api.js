@@ -1,4 +1,4 @@
-const { selectTopics, fetchEndpoints } = require("../models/api");
+const { selectTopics, fetchEndpoints } = require('../models/api');
 
 exports.getTopics = (req, res, next) => {
   selectTopics()
