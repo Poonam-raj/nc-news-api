@@ -47,13 +47,15 @@ exports.formFetchArticleQueryStr = async (sort_by, order, topic) => {
   let queryStr = `
   SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, COUNT(comments.comment_id) AS comment_count 
   FROM articles 
-  LEFT JOIN comments ON comments.article_id = articles.article_id`;
+  LEFT JOIN comments ON articles.article_id = comments.article_id`;
   const queryValues = [];
 
   if (topic) {
-    const topicSlugs = await db.query(`SELECT slug FROM topics;`);
-    const acceptedTopics = topicSlugs.rows.map((slug) => slug.slug);
-    if (!acceptedTopics.includes(topic)) {
+    const existingTopics = await db.query(
+      `SELECT slug FROM topics WHERE slug = $1;`,
+      [topic],
+    );
+    if (existingTopics.rowCount === 0) {
       return Promise.reject({ status: 404, msg: 'Topic Not Found' });
     }
 
