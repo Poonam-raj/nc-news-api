@@ -486,4 +486,80 @@ describe('comments', () => {
         });
     });
   });
+  describe('PATCH /api/comments/:comment_id', () => {
+    it('status:200, patches the comment with an updated vote count, returning the updated comment.', () => {
+      return request(app)
+        .patch('/api/comments/1')
+        .send({ inc_votes: 4 })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comment).toEqual(
+            expect.objectContaining({
+              comment_id: 1,
+              body: expect.any(String),
+              belongs_to: expect.any(String),
+              created_by: expect.any(String),
+              votes: 20,
+              created_at: expect.any(String),
+            }),
+          );
+        });
+    });
+    xit('status:200, ignores extra properties.', () => {
+      return request(app)
+        .patch('/api/comments/1')
+        .send({ inc_votes: -25, extraProp: false })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comment).toEqual(
+            expect.objectContaining({
+              comment_id: 1,
+              body: expect.any(String),
+              belongs_to: expect.any(String),
+              created_by: expect.any(String),
+              votes: -9,
+              created_at: expect.any(String),
+            }),
+          );
+        });
+    });
+
+    xit('status:400, error when passed a value with incorrect type.', () => {
+      return request(app)
+        .patch('/api/comments/1')
+        .send({ inc_votes: 'dog' })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual('Bad request: malformed body');
+        });
+    });
+    xit('status:400, error when missing inc_votes key.', () => {
+      return request(app)
+        .patch('/api/comments/1')
+        .send({ dog: -25 })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual('Bad request: malformed body');
+        });
+    });
+
+    xit('status:404, error when passed an article id which does not exist in the database.', () => {
+      return request(app)
+        .patch('/api/comments/99999')
+        .send({ inc_votes: -25 })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual('Comment with ID 99999 not found.');
+        });
+    });
+    xit('status:400, error when passed an invalid ID.', () => {
+      return request(app)
+        .patch('/api/comments/notAnId')
+        .send({ inc_votes: -25 })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual('Invalid ID');
+        });
+    });
+  });
 });
