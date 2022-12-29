@@ -15,7 +15,7 @@ The Northcoders News API holds a range of news articles all categorised by topic
 
 You can get all the articles, all topics, an article by ID and comments by article ID. You can also patch an article's vote count or post a new comment to an article.
 
-## Hosted App
+## Hosted App NEEDS UPDATING
 
 This API is hosted on Heroku and can be found here: [https://poonam-nc-news.herokuapp.com/](https://poonam-nc-news.herokuapp.com/)
 
@@ -61,6 +61,16 @@ Make the second file called `.env.development`. It should only contain the follo
 
 ```bash
 PGDATABASE=nc_news
+```
+
+#### .env.production
+
+Make the third file called `.env.production`. For this file you will need the URL of the ElephantSQL server instance.
+
+It should only contain the following:
+
+```bash
+DATABASE_URL=<URL>
 ```
 
 ### 4. Set Up Databases
