@@ -122,5 +122,5 @@ npm run start
 If the deployed app needs to be re-seeded (if the data is being muddied or any other reason - PLEASE TAKE CARE RE_SEEDING ONLY IF NEED BE) run:
 
 ```bash
-npm run seed:prod
+npm run seed-prod
 ```
