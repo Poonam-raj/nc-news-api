@@ -15,9 +15,9 @@ The Northcoders News API holds a range of news articles all categorised by topic
 
 You can get all the articles, all topics, an article by ID and comments by article ID. You can also patch an article's vote count or post a new comment to an article.
 
-## Hosted App NEEDS UPDATING
+## Hosted App
 
-This API is hosted on Heroku and can be found here: [https://poonam-nc-news.herokuapp.com/](https://poonam-nc-news.herokuapp.com/)
+This API is hosted on Render and can be found here: [https://nc-news-m9jy.onrender.com/api/](https://nc-news-m9jy.onrender.com/api/)
 
 ## Min Node and Postgres versions
 
